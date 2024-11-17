@@ -1,0 +1,439 @@
+swagger: '2.0'
+info:
+  version: '1.0'
+  title: "kptm-tools"
+  description: Core microservice
+  license:
+    name: MIT
+    url: https://github.com/apiaryio/polls-api/blob/master/LICENSE
+host: polls.apiblueprint.org
+basePath: /
+schemes:
+- https
+consumes:
+- application/json
+produces:
+- application/json
+paths:
+  /auth/me:
+    x-summary: Get info from a user
+    get:
+      summary: Get info from user
+          
+      responses:
+        200:
+          description: Successful Response
+          schema:
+            $ref: "#/definitions/UserResponse"
+  /auth/register:
+    x-summary: Register a user
+    post:
+      summary: Register a user
+      parameters:
+        - name: body
+          in: body
+          description: Data of user
+          schema: 
+            $ref: "#/definitions/UserRequest"
+          required: true
+          
+      responses:
+        200:
+          description: Successful Response
+          schema:
+            type: string
+            example: Sucessful Operation
+  /auth/login:
+    x-summary: Authenticates a user
+    post:
+      summary: Login a user
+      parameters:
+        - name: body
+          in: body
+          description: Receives a LoginRequest that can be with password or using third partner. 
+          schema: 
+            $ref: "#/definitions/LoginRequest"
+      responses:
+        200:
+          description: Successful Response
+          schema:
+            $ref: "#/definitions/LoginResponse"
+            
+  /domains:
+    x-summary: Domains collection
+    post:
+      summary: Register a domain
+      parameters:
+        - name: body
+          in: body
+          description: Takes in header token that contains id of user so we know to which user correspond the domain
+          schema: 
+            $ref: "#/definitions/DomainRequest"
+          required: true
+        - name: Authorization
+          in: header
+          description: an authorization header
+          required: true
+          type: string
+          
+      responses:
+        200:
+          description: Successful Response
+          schema:
+            $ref: "#/definitions/DomainResponse"  
+    get:
+      summary: Obtains all domains 
+      parameters:
+        - name: Authorization
+          in: header
+          description: an authorization header
+          required: true
+          type: string
+      responses:
+        200:
+          description: Successful Response
+          schema:
+            type: array
+            items:
+              - $ref: "#/definitions/DomainResponse"
+            
+    patch:
+      summary: Modify a list of domains    
+      parameters:
+        - name: Authorization
+          in: header
+          description: an authorization header
+          required: true
+          type: string
+        - name: body
+          in: body
+          description: An array of domain Request 
+          schema: 
+            type: array
+            items:
+              - $ref: "#/definitions/DomainRequest"
+          required: true
+  
+      responses:
+        200:
+          description: Successful Response
+          schema:
+            type: string
+            example: Done
+            
+  /domains/{id}:
+    x-summary: Delete a domain
+    delete:
+      summary: Delete a domain
+      parameters:
+        - name: id
+          in: path
+          description: Id of domain
+          type: string
+          x-example: 1
+          required: true
+        - name: Authorization
+          in: header
+          description: an authorization header
+          required: true
+          type: string
+      responses:
+        200:
+          description: Successful Response
+          schema:
+            type: string
+            example: Done
+            
+  /domains/{id}/validate:
+    x-summary: Validate IP or domain
+    delete:
+      summary: Validate IP or domain
+      parameters:
+        - name: id
+          in: path
+          description: Id of domain
+          type: string
+          x-example: 
+          required: true
+        - name: Authorization
+          in: header
+          description: an authorization header
+          required: true
+          type: string
+      responses:
+        200:
+          description: Successful Response
+          schema:
+            $ref: "#/definitions/ValidateResponse"
+  /scanner:
+    x-summary: Operations related to scanning
+    get:
+      summary: Obtains all scannings done by the user
+      parameters:
+        - name: Authorization
+          in: header
+          description: an authorization header
+          required: true
+          type: string
+      responses:
+        200:
+          description: Successful Response
+          schema:
+            $ref: "#/definitions/ScanGeneralResponse"
+    post: 
+      summary: Create a scanning for a given set of domains or IPs and outputs an id of the scanning
+      parameters:
+        - name: Authorization
+          in: header
+          description: an authorization header
+          required: true
+          type: string
+        - name: body
+          in: body
+          description: Body where is specified the list of id domains and possible schedule 
+          required: true
+          schema:
+            $ref: "#/definitions/ScanRequest"
+      responses:
+        200:
+          description: Successful Response
+          schema:
+            type: object
+            properties:
+              id: 
+                type: string
+  /scanner/{id}:
+    x-summary: Operations related to specific scanning
+    get:
+      summary: Obtains results of a given scanning
+      parameters:
+        - name: id
+          in: path
+          description: Id of scannig
+          type: string
+          x-example: 
+          required: true
+        - name: Authorization
+          in: header
+          description: an authorization header
+          required: true
+          type: string
+      responses:
+        200:
+          description: Successful Response
+          schema:
+            $ref: "#/definitions/ScannerResponse"
+    patch:
+      summary: Add comments in the result of scanning
+      parameters:
+        - name: id
+          in: path
+          description: Id of scannig
+          type: string
+          x-example: 
+          required: true
+        - name: body
+          in: body
+          description: Contains the DTO Request for adding comments
+          required: true
+          schema:
+            $ref: "#/definitions/ScanPatchRequest"
+        - name: Authorization
+          in: header
+          description: an authorization header
+          required: true
+          type: string
+      responses:
+        200:
+          description: Successful Response
+          schema:
+            type: string
+            example: Done
+  
+  /reports:
+    x-summary: Generate reports for user
+    post:
+      summary: Return a report of findings obtained from the vulnerabilities and gathered information
+      parameters:
+        - name: Authorization
+          in: header
+          description: an authorization header
+          required: true
+          type: string
+        - name: body
+          in: body
+          description: Contains the periodicity of the request
+          required: true
+          schema:
+            $ref: "#/definitions/ReportRequest"
+      responses:
+        200:
+          description: Successful Response
+          schema:
+            type: string
+            example: http://bucket/file
+    
+definitions:
+  UserRequest:
+    title: Information from user
+    type: object
+    properties:
+      documentIdentifier:
+        type: string
+      name:
+        type: string
+      roleId:
+        type: string
+      notificationURL:
+        type: string
+      notificationEmail:
+        type: string
+    required:
+      - documentIdentifier
+      - name
+      - roleId
+  LoginResponse:
+    title: Login Response
+    type: object
+    properties:
+      status:
+        type: boolean
+      data:
+        type: object
+        properties:
+          id:
+            type: string
+          name:
+            type: string
+          roleId:
+            type: string
+          access_token:
+            type: string
+        
+
+  LoginRequest:
+    title: Login Request
+    type: object
+    properties:
+      email: 
+        type: string
+      password:
+        type: string
+      googleId:
+        type: string
+      githubId:
+        type: string
+        
+  UserResponse:
+    title: User Response
+    type: object
+    properties:
+      name:
+        type: string
+      role:
+        type: string
+  
+  DomainRequest:
+    title: Domain Request
+    type: object
+    properties:
+      name:
+        type: string
+        example: www.google.com
+        
+  DomainResponse:
+    title: Domain Response
+    type: object
+    properties:
+      id: 
+        type: string
+        example: 1
+      name:
+        type: string
+        example: www.google.com
+  
+  ValidateResponse:
+    title: Validatation of Domain Response
+    type: object
+    properties:
+      isValid: 
+        type: boolean
+        example: true
+      reason:
+        type: string
+        example: It appears in DNS
+  ReportRequest:
+    title: Report Request
+    type: object
+    properties:
+      period:
+        type: string
+      scans:
+        type: array
+        items:
+          type: string
+  
+  ScanPatchRequest:
+    title: Request for Scan Patch
+    type: object
+    properties:
+      commentGeneral: 
+        type: string
+      comments:
+        type: array
+        items:
+          type: object
+          properties:
+            toolId: 
+              type: string
+            comment:
+              type: string
+  ScannerResponse:
+    title: Scanner Response DTO
+    type: object
+    properties:
+      tool:
+        type: string
+      failure: 
+        type: string
+      failuresDetail:
+        type: array
+        items:
+          type: object
+          properties:
+            vulnerabilityName:
+              type: string
+            severity:
+              type: string
+            description:
+              type: string
+            affectedAsset:
+              type: string
+            additionalReference:
+              type: string
+  ScanRequest:
+    title: Scan
+    type: object
+    properties:
+      domains:
+        type: array
+        items:
+          type: string
+      schedule:
+        type: string
+  ScanGeneralResponse:
+    title: Scan General Response
+    type: array
+    items:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        date:
+          type: string
+        commentGeneral:
+          type: string
+        numberVulnerabilities:
+          type: number
