@@ -59,14 +59,14 @@ paths:
           schema:
             $ref: "#/definitions/LoginResponse"
             
-  /domains:
-    x-summary: Domains collection
+  /targets:
+    x-summary: Targets collection
     post:
-      summary: Register a domain
+      summary: Register a target
       parameters:
         - name: body
           in: body
-          description: Takes in header token that contains id of user so we know to which user correspond the domain
+          description: Takes in header token that contains id of user so we know to which user correspond the target
           schema: 
             $ref: "#/definitions/DomainRequest"
           required: true
@@ -82,7 +82,7 @@ paths:
           schema:
             $ref: "#/definitions/DomainResponse"  
     get:
-      summary: Obtains all domains 
+      summary: Obtains all targets 
       parameters:
         - name: Authorization
           in: header
@@ -98,7 +98,7 @@ paths:
               - $ref: "#/definitions/DomainResponse"
             
     patch:
-      summary: Modify a list of domains    
+      summary: Modify a list of targets    
       parameters:
         - name: Authorization
           in: header
@@ -107,7 +107,7 @@ paths:
           type: string
         - name: body
           in: body
-          description: An array of domain Request 
+          description: An array of target Request 
           schema: 
             type: array
             items:
@@ -121,14 +121,14 @@ paths:
             type: string
             example: Done
             
-  /domains/{id}:
-    x-summary: Delete a domain
+  /targets/{id}:
+    x-summary: Delete a target
     delete:
-      summary: Delete a domain
+      summary: Delete a target
       parameters:
         - name: id
           in: path
-          description: Id of domain
+          description: Id of target
           type: string
           x-example: 1
           required: true
@@ -144,14 +144,14 @@ paths:
             type: string
             example: Done
             
-  /domains/{id}/validate:
-    x-summary: Validate IP or domain
+  /targets/{id}/validate:
+    x-summary: Validate target that can be IP or domain
     delete:
-      summary: Validate IP or domain
+      summary: Validate target
       parameters:
         - name: id
           in: path
-          description: Id of domain
+          description: Id of target
           type: string
           x-example: 
           required: true
@@ -181,7 +181,7 @@ paths:
           schema:
             $ref: "#/definitions/ScanGeneralResponse"
     post: 
-      summary: Create a scanning for a given set of domains or IPs and outputs an id of the scanning
+      summary: Create a scanning for a given set of targets and outputs an id of the scanning
       parameters:
         - name: Authorization
           in: header
@@ -190,7 +190,7 @@ paths:
           type: string
         - name: body
           in: body
-          description: Body where is specified the list of id domains and possible schedule 
+          description: Body where is specified the list of id targets and possible schedule 
           required: true
           schema:
             $ref: "#/definitions/ScanRequest"
@@ -249,6 +249,27 @@ paths:
           schema:
             type: string
             example: Done
+    
+    delete:
+      summary: Delete scan
+      parameters:
+        - name: id
+          in: path
+          description: Id of scannig
+          type: string
+          x-example: 
+          required: true
+        - name: Authorization
+          in: header
+          description: an authorization header
+          required: true
+          type: string
+      responses:
+        200:
+          description: Successful Response
+          schema:
+            type: string
+            example: Done  
   
   /reports:
     x-summary: Generate reports for user
@@ -334,7 +355,7 @@ definitions:
         type: string
   
   DomainRequest:
-    title: Domain Request
+    title: Target Request
     type: object
     properties:
       name:
@@ -342,7 +363,7 @@ definitions:
         example: www.google.com
         
   DomainResponse:
-    title: Domain Response
+    title: Target Response
     type: object
     properties:
       id: 
@@ -353,7 +374,7 @@ definitions:
         example: www.google.com
   
   ValidateResponse:
-    title: Validatation of Domain Response
+    title: Validation of Target Response
     type: object
     properties:
       isValid: 
@@ -415,7 +436,7 @@ definitions:
     title: Scan
     type: object
     properties:
-      domains:
+      targets:
         type: array
         items:
           type: string
@@ -431,7 +452,9 @@ definitions:
           type: string
         name:
           type: string
-        date:
+        dateStart:
+          type: string
+        dateFinishScan:
           type: string
         commentGeneral:
           type: string
