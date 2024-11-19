@@ -15,49 +15,6 @@ consumes:
 produces:
 - application/json
 paths:
-  /auth/me:
-    x-summary: Get info from a user
-    get:
-      summary: Get info from user
-          
-      responses:
-        200:
-          description: Successful Response
-          schema:
-            $ref: "#/definitions/UserResponse"
-  /auth/register:
-    x-summary: Register a user
-    post:
-      summary: Register a user
-      parameters:
-        - name: body
-          in: body
-          description: Data of user
-          schema: 
-            $ref: "#/definitions/UserRequest"
-          required: true
-          
-      responses:
-        200:
-          description: Successful Response
-          schema:
-            type: string
-            example: Sucessful Operation
-  /auth/login:
-    x-summary: Authenticates a user
-    post:
-      summary: Login a user
-      parameters:
-        - name: body
-          in: body
-          description: Receives a LoginRequest that can be with password or using third partner. 
-          schema: 
-            $ref: "#/definitions/LoginRequest"
-      responses:
-        200:
-          description: Successful Response
-          schema:
-            $ref: "#/definitions/LoginResponse"
             
   /targets:
     x-summary: Targets collection
@@ -204,25 +161,6 @@ paths:
                 type: string
   /scanner/{id}:
     x-summary: Operations related to specific scanning
-    get:
-      summary: Obtains results of a given scanning
-      parameters:
-        - name: id
-          in: path
-          description: Id of scannig
-          type: string
-          x-example: 
-          required: true
-        - name: Authorization
-          in: header
-          description: an authorization header
-          required: true
-          type: string
-      responses:
-        200:
-          description: Successful Response
-          schema:
-            $ref: "#/definitions/ScannerResponse"
     patch:
       summary: Add comments in the result of scanning
       parameters:
@@ -270,7 +208,49 @@ paths:
           schema:
             type: string
             example: Done  
-  
+  /scanner/{id}/per-tool:
+    x-summary: Path for analist
+    get:
+      summary: Obtains results of a given scanning
+      parameters:
+        - name: id
+          in: path
+          description: Id of scannig
+          type: string
+          x-example: 
+          required: true
+        - name: Authorization
+          in: header
+          description: an authorization header
+          required: true
+          type: string
+      responses:
+        200:
+          description: Successful Response
+          schema:
+            $ref: "#/definitions/ScannerResponse"
+
+  /scanner/{id}/aggregated:
+    x-summary: Path for Client
+    get:
+      summary: Obtains results of a given scanning
+      parameters:
+        - name: id
+          in: path
+          description: Id of scannig
+          type: string
+          x-example: 
+          required: true
+        - name: Authorization
+          in: header
+          description: an authorization header
+          required: true
+          type: string
+      responses:
+        200:
+          description: Successful Response
+          schema:
+            $ref: "#/definitions/ScannerSimpleResponse"
   /reports:
     x-summary: Generate reports for user
     post:
@@ -409,6 +389,25 @@ definitions:
               type: string
             comment:
               type: string
+  ScannerSimpleResponse:
+    title: Scanner Simple Response DTO
+    type: object
+    properties:
+      osData:
+        type: object
+        properties:
+          version:
+            type: string
+          vulnerability:
+            type: string
+      portData:
+        type: object
+        properties:
+          portNumber:
+            type: string
+          vulnerability:
+            type: string
+          
   ScannerResponse:
     title: Scanner Response DTO
     type: object
