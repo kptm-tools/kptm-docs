@@ -15,6 +15,68 @@ consumes:
 produces:
 - application/json
 paths:
+  /api/login:
+    x-summary: Login
+    post:
+      summary: Login to KPTM Tools
+      parameters:
+        - name: body
+          in: body
+          description: Hello world
+          schema:
+            $ref: "#/definitions/LoginRequest"
+
+
+      responses:
+        200:
+          description: Successful Response
+          schema:
+            $ref: "#/definitions/LoginResponse"
+          examples:
+            SuccessfulResponse:
+            value:
+              token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.tGzvRYtktuh_cKZ03H2y0-N0e3at6YxYADAFi65M2o"
+              tokenExpirationInstant: 1677686400000
+              user:
+                active: true
+                birthDate: "1990-01-01"
+                connectorId: "123e4567-e89b-12d3-a456-426614174000"
+                data: {}
+                email: "john.doe@example.com"
+                firstName: "John"
+                fullName: "John Doe"
+                id: "00000000-0000-0000-0000-000000000001"
+                insertInstant: 1677686400000
+                lastLoginInstant: 1677686400000
+                lastName: "Doe"
+                lastUpdateInstant: 1677686400000
+                memberships: []
+                passwordChangeRequired: false
+                passwordLastUpdateInstant: 1677686400000
+                preferredLanguages: []
+                registrations: []
+                tenantId: "123e4567-e89b-12d3-a456-426614174001"
+                twoFactor:
+                  methods: []
+                  recoveryCodes: []
+                usernameStatus: "ACTIVE"
+                verified: true
+                verifiedInstant: 1677686400000
+        400:
+          description: Bad Request with error details
+          schema:
+            $ref: "#/definitions/APIError"
+          examples:
+            BadRequestResponse:
+            value:
+              error: "You must specify the [password] property"
+            
+        404:
+          description: The resource was not found
+          examples:
+            NotFoundResponse:
+              value:
+              
             
   /targets:
     x-summary: Targets collection
@@ -37,7 +99,9 @@ paths:
         200:
           description: Successful Response
           schema:
-            $ref: "#/definitions/DomainResponse"  
+            $ref: "#/definitions/DomainResponse"
+
+            
     get:
       summary: Obtains all targets 
       parameters:
@@ -52,7 +116,7 @@ paths:
           schema:
             type: array
             items:
-              - $ref: "#/definitions/DomainResponse"
+              $ref: "#/definitions/DomainResponse"
             
     patch:
       summary: Modify a list of targets    
@@ -68,7 +132,7 @@ paths:
           schema: 
             type: array
             items:
-              - $ref: "#/definitions/DomainRequest"
+              $ref: "#/definitions/DomainRequest"
           required: true
   
       responses:
@@ -87,7 +151,7 @@ paths:
           in: path
           description: Id of target
           type: string
-          x-example: 1
+          x-example: "1"
           required: true
         - name: Authorization
           in: header
@@ -110,7 +174,7 @@ paths:
           in: path
           description: Id of target
           type: string
-          x-example: 
+          x-example: "1"
           required: true
         - name: Authorization
           in: header
@@ -168,7 +232,7 @@ paths:
           in: path
           description: Id of scannig
           type: string
-          x-example: 
+          x-example: "1"
           required: true
         - name: body
           in: body
@@ -195,7 +259,7 @@ paths:
           in: path
           description: Id of scannig
           type: string
-          x-example: 
+          x-example: "1"
           required: true
         - name: Authorization
           in: header
@@ -217,7 +281,7 @@ paths:
           in: path
           description: Id of scannig
           type: string
-          x-example: 
+          x-example: "1"
           required: true
         - name: Authorization
           in: header
@@ -239,7 +303,7 @@ paths:
           in: path
           description: Id of scannig
           type: string
-          x-example: 
+          x-example: "1"
           required: true
         - name: Authorization
           in: header
@@ -275,6 +339,14 @@ paths:
             example: http://bucket/file
     
 definitions:
+
+  APIError:
+    type: object
+    properties:
+      error:  
+        type: string
+        description: Detailed error information.
+
   UserRequest:
     title: Information from user
     type: object
@@ -293,46 +365,169 @@ definitions:
       - documentIdentifier
       - name
       - roleId
-  LoginResponse:
-    title: Login Response
-    type: object
-    properties:
-      status:
-        type: boolean
-      data:
-        type: object
-        properties:
-          id:
-            type: string
-          name:
-            type: string
-          roleId:
-            type: string
-          access_token:
-            type: string
-        
 
   LoginRequest:
     title: Login Request
     type: object
     properties:
-      email: 
+      loginId: 
         type: string
       password:
         type: string
-      googleId:
+      applicationId:
         type: string
-      githubId:
-        type: string
-        
-  UserResponse:
-    title: User Response
+      
+  LoginResponse:
+    title: Login Response
     type: object
     properties:
-      name:
+      token:
         type: string
-      role:
+        description: The access token used for authentication.
+      tokenExpirationInstant:
+        type: integer
+        format: int64
+        description: The timestamp (in milliseconds) when the access token expires.
+      user:
+        $ref: '#/definitions/User'
+        
+
+  User:
+    type: object
+    properties:
+      active:
+        type: boolean
+        description: Whether the user account is active.
+      birthDate:
         type: string
+        format: date
+        description: The user's birth date.
+      connectorId:
+        type: string
+        description: Unique identifier for a connector associated with the user.
+      data:
+        type: object
+        description: Additional user data specific to the application.
+      email:
+        type: string
+        description: The user's email address.
+      firstName:
+        type: string
+        description: The user's first name.
+      fullName:
+        type: string
+        description: The user's full name.
+      id:
+        type: string
+        description: Unique identifier for the user.
+      insertInstant:
+        type: integer
+        format: int64
+        description: The timestamp (in milliseconds) when the user record was created.
+      lastLoginInstant:
+        type: integer
+        format: int64
+        description: The timestamp (in milliseconds) when the user last logged in.
+      lastName:
+        type: string
+        description: The user's last name.
+      lastUpdateInstant:
+        type: integer
+        format: int64
+        description: The timestamp (in milliseconds) when the user record was last updated.
+      memberships:
+        type: array
+        items:
+          type: object
+          # Omit nested object definition for memberships (optional)
+      passwordChangeRequired:
+        type: boolean
+        description: Whether the user needs to change their password.
+      passwordLastUpdateInstant:
+        type: integer
+        format: int64
+        description: The timestamp (in milliseconds) when the user's password was last updated.
+      preferredLanguages:
+        type: array
+        items:
+          type: string
+          # Omit nested definition for preferred languages (optional)
+      registrations:
+        type: array
+        items:
+          type: object
+          properties:
+            applicationId:
+              type: string
+              description: Unique identifier for the application the user is registered to.
+            data:
+              type: object
+              description: Additional registration data specific to the application.
+            id:
+              type: string
+              description: Unique identifier for the user registration.
+            insertInstant:
+              type: integer
+              format: int64
+              description: The timestamp (in milliseconds) when the user registration was created.
+            lastLoginInstant:
+              type: integer
+              format: int64
+              description: The timestamp (in milliseconds) when the user last logged in for this application.
+            lastUpdateInstant:
+              type: integer
+              format: int64
+              description: The timestamp (in milliseconds) when the user registration was last updated.
+            preferredLanguages:
+              type: array
+              items:
+                type: string
+                # Omit nested definition for preferred languages (optional)
+            roles:
+              type: array
+              items:
+                type: string
+                description: The user's roles within the application.
+            tokens:
+              type: object
+              # Omit nested object definition for tokens (optional)
+            usernameStatus:
+              type: string
+              description: The status of the user's username (e.g., ACTIVE, INACTIVE).
+            verified:
+              type: boolean
+              description: Whether the user's email address has been verified.
+            verifiedInstant:
+              type: integer
+              format: int64
+              description: The timestamp (in milliseconds) when the user's email address was verified.
+      tenantId:
+        type: string
+        description: Unique identifier for the tenant the user belongs to.
+      twoFactor:
+        type: object
+        properties:
+          methods:
+            type: array
+            items:
+              type: string
+              # Omit nested definition for two-factor methods (optional)
+          recoveryCodes:
+            type: array
+            items:
+              type: string
+              # Omit nested definition for recovery codes (optional)
+      usernameStatus:
+        type: string
+        description: The status of the user's username (e.g., ACTIVE, INACTIVE).
+      verified:
+        type: boolean
+        description: Whether the user's email address has been verified.
+      verifiedInstant:
+        type: integer
+        format: int64
+        description: The timestamp (in milliseconds) when the user's email address was verified.
+            
   
   DomainRequest:
     title: Target Request
@@ -343,8 +538,8 @@ definitions:
         example: www.google.com
         
   DomainResponse:
-    title: Target Response
     type: object
+    title: Target Response
     properties:
       id: 
         type: string
