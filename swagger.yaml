@@ -113,7 +113,40 @@ paths:
             BadRequestResponse:
             value:
               error: "Request body contains unknown field: \"name\""
-    
+              
+  /api/user/{userID}:
+    x-summary: User's collection
+    post:
+      summary: Register a new Tenant
+      parameters:
+        - name: userID
+          in: path
+          type: string
+          required: true
+          description: The UUID of the user to get
+
+      responses:
+        200:
+          description: Successful Response containing user data
+          schema:
+            $ref: "#/definitions/DomainUser"
+          examples:
+            SuccessfulResponse:
+            value:
+                id: "e47b86c1-4ff5-4dc1-8821-28879244cdfe"
+                email: "operator@example.com"
+                password: "20dfa07f-caa3-4433-b7b4-8d1d5ad19636"
+                application_id: "95f5c37a-a4c7-4399-8c87-0e8984ed6e53"
+                roles: ["operator"]
+              
+        400:
+          description: Bad Request with error details
+          schema:
+            $ref: "#/definitions/APIError"
+          examples:
+            BadRequestResponse:
+            value:
+              error: "Invalid uuid: \"5\""    
             
   /targets:
     x-summary: Targets collection
