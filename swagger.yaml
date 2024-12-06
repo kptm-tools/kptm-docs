@@ -117,7 +117,7 @@ paths:
   /api/user/{userID}:
     x-summary: User's collection
     post:
-      summary: Register a new Tenant
+      summary: Get a Domain User
       parameters:
         - name: userID
           in: path
