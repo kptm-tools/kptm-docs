@@ -77,6 +77,28 @@ paths:
             NotFoundResponse:
               value:
               
+  /api/forgot-password:
+    x-summary: Reset-Password
+    post:
+      summary: Reset the password given an email and applicationId
+      parameters:
+        - name: body
+          in: body
+          description: Fields required to reset password
+          schema:
+            $ref: "#/definitions/ForgotPasswordRequest"
+
+
+      responses:
+        200:
+          description: Successful Response
+          schema:
+            $ref: "#/definitions/ForgotPasswordResponse"
+          examples:
+            SuccessfulResponse:
+              value:
+                statusCode: 200
+                changePasswordId: "XjylEgEUH3pFzSrt1JSxx4GYmD3ZvKfff6y3n2iUxqc"
   /api/tenant:
     x-summary: Tenants collection
     post:
@@ -461,6 +483,22 @@ definitions:
       user:
         $ref: '#/definitions/User'
         
+  ForgotPasswordRequest:
+    title: Forgot password Request
+    type: object
+    properties:
+      loginId: 
+        type: string
+      applicationId:
+        type: string
+  ForgotPasswordResponse:
+    title: Forgot password Response
+    type: object
+    properties:
+      statusCode: 
+        type: number
+      changePasswordId:
+        type: string
   RegisterTenantRequest:
     title: Register Tenant Request
     type: object
