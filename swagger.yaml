@@ -483,13 +483,37 @@ definitions:
       user:
         $ref: '#/definitions/User'
         
+  RegisterUserRequest:
+    title: Register User Request
+    type: object
+    properties:
+      firstname: 
+        type: string
+      lastname:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+      roles:
+        type: array
+        items:
+          type: string
+      application_id:
+        type: string
+  RegisterUserResponse:
+    title: Register User Response
+    type: object
+    properties:
+      verification_id:
+        type: string
   ForgotPasswordRequest:
     title: Forgot password Request
     type: object
     properties:
-      loginId: 
+      login_id: 
         type: string
-      applicationId:
+      application_id:
         type: string
   ForgotPasswordResponse:
     title: Forgot password Response
@@ -497,7 +521,7 @@ definitions:
     properties:
       statusCode: 
         type: number
-      changePasswordId:
+      change_password_id:
         type: string
   RegisterTenantRequest:
     title: Register Tenant Request
@@ -799,3 +823,133 @@ definitions:
           type: string
         numberVulnerabilities:
           type: number
+  WhoisInfo:
+    type: object
+    properties:
+      domain:
+        $ref: '#/definitions/Domain'
+      registrar:
+        $ref: '#/definitions/Contact'
+      registrant:
+        $ref: '#/definitions/Contact'
+      administrative:
+        $ref: '#/definitions/Contact'
+      technical:
+        $ref: '#/definitions/Contact'
+      billing:
+        $ref: '#/definitions/Contact'
+    # No required array means all properties are optional
+
+  Domain:
+    type: object
+    properties:
+      id:
+        type: string
+        description: The unique identifier of the domain.
+      domain:
+        type: string
+        description: The domain name.
+      punycode:
+        type: string
+        description: The punycode representation of the domain name.
+      name:
+        type: string
+        description: The name of the domain.
+      extension:
+        type: string
+        description: The domain extension (e.g., .com, .org).
+      whois_server:
+        type: string
+        description: The Whois server for the domain.
+      status:
+        type: array
+        items:
+          type: string
+        description: The status of the domain.
+      name_servers:
+        type: array
+        items:
+          type: string
+        description: The nameservers associated with the domain.
+      dnssec:
+        type: boolean
+        description: Indicates if the domain has DNSSEC enabled.
+      created_date:
+        type: string
+        format: date-time
+        description: The date the domain was created.
+      created_date_in_time:
+        type: string
+        format: date-time
+        description: The creation date as a `time.Time` object.
+      updated_date:
+        type: string
+        format: date-time
+        description: The last update date of the domain.
+      updated_date_in_time:
+        type: string
+        format: date-time
+        description: The last update date as a `time.Time` object.
+      expiration_date:
+        type: string
+        format: date-time
+        description: The expiration date of the domain.
+      expiration_date_in_time:
+        type: string
+        format: date-time
+        description: The expiration date as a `time.Time` object.
+
+  Contact:
+    type: object
+    properties:
+      id:
+        type: string
+        description: The unique identifier for the contact.
+      name:
+        type: string
+        description: The name of the contact.
+      organization:
+        type: string
+        description: The organization associated with the contact.
+      street:
+        type: string
+        description: The street address of the contact.
+      city:
+        type: string
+        description: The city of the contact.
+      province:
+        type: string
+        description: The province or state of the contact.
+      postal_code:
+        type: string
+        description: The postal code of the contact.
+      country:
+        type: string
+        description: The country of the contact.
+      phone:
+        type: string
+        description: The contact's phone number.
+      phone_ext:
+        type: string
+        description: The phone extension, if any.
+      fax:
+        type: string
+        description: The fax number of the contact.
+      fax_ext:
+        type: string
+        description: The fax extension, if any.
+      email:
+        type: string
+        description: The email address of the contact.
+      referral_url:
+        type: string
+        description: A referral URL associated with the contact.
+
+  WhoIsEventResult:
+    type: object
+    properties:
+      hosts:
+        type: array
+        items:
+          $ref: '#/definitions/WhoisInfo'
+        description: A list of Whois information for the hosts.
