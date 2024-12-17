@@ -80,7 +80,7 @@ paths:
   /api/forgot-password:
     x-summary: Reset-Password
     post:
-      summary: Reset the password given an email and applicationId
+      summary: Reset the password given an email and applicationId. This will send an email with a given code that will be used to change password.
       parameters:
         - name: body
           in: body
@@ -98,7 +98,29 @@ paths:
             SuccessfulResponse:
               value:
                 statusCode: 200
-                changePasswordId: "XjylEgEUH3pFzSrt1JSxx4GYmD3ZvKfff6y3n2iUxqc"
+                change_password_id: "XjylEgEUH3pFzSrt1JSxx4GYmD3ZvKfff6y3n2iUxqc"
+  /api/change-password:
+    x-summary: Change-Password
+    post:
+      summary: Given the change_password_id, we can do a change of the password
+      parameters:
+        - name: body
+          in: body
+          description: Fields required to change password
+          schema:
+            $ref: "#/definitions/ChangePasswordRequest"
+
+
+      responses:
+        200:
+          description: Successful Response
+          schema:
+            $ref: "#/definitions/ChangePasswordResponse"
+          examples:
+            SuccessfulResponse:
+              value:
+                statusCode: 200
+                change_password_id: "XjylEgEUH3pFzSrt1JSxx4GYmD3ZvKfff6y3n2iUxqc"
   /api/tenant:
     x-summary: Tenants collection
     post:
@@ -135,7 +157,22 @@ paths:
             BadRequestResponse:
             value:
               error: "Request body contains unknown field: \"name\""
-              
+  /api/user:
+    x-summary: User's collection
+    post:
+      summary: Creates a user
+      parameters:
+        - name: body
+          in: body
+          description: Data required to create a user
+          schema: 
+            $ref: "#/definitions/RegisterUserRequest"
+          required: true
+      responses:
+        200:
+          description: Successful Response containing user data and verificationId that is used to verify email
+          schema:
+            $ref: "#/definitions/DomainUser"
   /api/user/{userID}:
     x-summary: User's collection
     post:
@@ -169,64 +206,124 @@ paths:
             BadRequestResponse:
             value:
               error: "Invalid uuid: \"5\""    
-            
-  /targets:
-    x-summary: Targets collection
+  /api/user/{userID}/verify-email:  
+    x-summary: User's collection
     post:
-      summary: Register a target
+      summary: Verify email of user 
+      parameters:
+        - name: userID
+          in: path
+          type: string
+          required: true
+          description: The UUID of the user to get
+        - name: body
+          in: body
+          description: Data required to verify email
+          schema: 
+            $ref: "#/definitions/VerifyEmailRequest"
+          required: true
+          
+      responses:
+        200:
+          description: Successful Response containing user data
+          schema:
+            $ref: "#/definitions/DomainUser"
+          examples:
+            SuccessfulResponse:
+            value:
+                id: "e47b86c1-4ff5-4dc1-8821-28879244cdfe"
+                email: "operator@example.com"
+                password: "20dfa07f-caa3-4433-b7b4-8d1d5ad19636"
+                application_id: "95f5c37a-a4c7-4399-8c87-0e8984ed6e53"
+                roles: ["operator"]
+              
+        400:
+          description: Bad Request with error details
+          schema:
+            $ref: "#/definitions/APIError"
+          examples:
+            BadRequestResponse:
+            value:
+              error: "Invalid uuid: \"5\"" 
+  /api/host:
+    x-summary: Host collection
+    post:
+      summary: Register a host
       parameters:
         - name: body
           in: body
-          description: Takes in header token that contains id of user so we know to which user correspond the target
+          description: Data for Host request 
           schema: 
-            $ref: "#/definitions/DomainRequest"
+            $ref: "#/definitions/HostRequest"
           required: true
-        - name: Authorization
-          in: header
-          description: an authorization header
-          required: true
-          type: string
+
           
       responses:
         200:
           description: Successful Response
           schema:
-            $ref: "#/definitions/DomainResponse"
+            $ref: "#/definitions/HostResponse"
 
             
     get:
-      summary: Obtains all targets 
-      parameters:
-        - name: Authorization
-          in: header
-          description: an authorization header
-          required: true
-          type: string
+      summary: Obtains all hosts of a tenant
+      
       responses:
         200:
           description: Successful Response
           schema:
             type: array
             items:
-              $ref: "#/definitions/DomainResponse"
+              $ref: "#/definitions/HostResponse"
             
-    patch:
-      summary: Modify a list of targets    
+   
+  /api/host/{hostID}:
+    x-summary: Host collection 
+    get:
+      summary: Get a host
       parameters:
-        - name: Authorization
-          in: header
-          description: an authorization header
-          required: true
+        - name: hostID
+          in: path
+          description: Id of host
           type: string
+          x-example: "1"
+          required: true
+        
+      responses:
+        200:
+          description: Successful Response
+          schema:
+            $ref: "#/definitions/HostResponse"
+    patch:
+      summary: Modify a host
+      parameters:
+        - name: hostID
+          in: path
+          description: Id of host
+          type: string
+          x-example: "1"
+          required: true
         - name: body
           in: body
-          description: An array of target Request 
           schema: 
-            type: array
-            items:
-              $ref: "#/definitions/DomainRequest"
+            $ref: "#/definitions/HostRequest"
+        
+      responses:
+        200:
+          description: Successful Response
+          schema:
+            type: string
+            example: Done
+    delete:
+      summary: Delete a host
+      parameters:
+        - name: hostID
+          in: path
+          description: Id of host
+          type: string
+          x-example: "1"
           required: true
-  
+        
       responses:
         200:
           description: Successful Response
@@ -234,45 +331,20 @@ paths:
             type: string
             example: Done
             
-  /targets/{id}:
-    x-summary: Delete a target
-    delete:
-      summary: Delete a target
+  /api/host/validate:
+    x-summary: Validate host that can be IP or domain
+    post:
+      summary: Validate host
       parameters:
-        - name: id
-          in: path
-          description: Id of target
-          type: string
-          x-example: "1"
+        - name: body
+          in: body
+          schema: 
+            type: object
+            properties:
+              host:
+                type: string
           required: true
-        - name: Authorization
-          in: header
-          description: an authorization header
-          required: true
-          type: string
-      responses:
-        200:
-          description: Successful Response
-          schema:
-            type: string
-            example: Done
-            
-  /targets/{id}/validate:
-    x-summary: Validate target that can be IP or domain
-    delete:
-      summary: Validate target
-      parameters:
-        - name: id
-          in: path
-          description: Id of target
-          type: string
-          x-example: "1"
-          required: true
-        - name: Authorization
-          in: header
-          description: an authorization header
-          required: true
-          type: string
+       
       responses:
         200:
           description: Successful Response
@@ -507,6 +579,12 @@ definitions:
     properties:
       verification_id:
         type: string
+  VerifyEmailRequest:
+    title: Verify Email Request
+    type: object
+    properties:
+      verification_id: 
+        type: string
   ForgotPasswordRequest:
     title: Forgot password Request
     type: object
@@ -522,6 +600,28 @@ definitions:
       statusCode: 
         type: number
       change_password_id:
+        type: string
+        
+  ChangePasswordRequest:
+    title: Change password Request
+    type: object
+    properties:
+      login_id: 
+        type: string
+      password: 
+        type: string
+      change_password_id: 
+        type: string
+      application_id:
+        type: string
+    
+  ChangePasswordResponse:
+    title: Change password Response
+    type: object
+    properties:
+      statusCode: 
+        type: number
+      data:
         type: string
   RegisterTenantRequest:
     title: Register Tenant Request
@@ -697,25 +797,6 @@ definitions:
         format: int64
         description: The timestamp (in milliseconds) when the user's email address was verified.
             
-  
-  DomainRequest:
-    title: Target Request
-    type: object
-    properties:
-      name:
-        type: string
-        example: www.google.com
-        
-  DomainResponse:
-    type: object
-    title: Target Response
-    properties:
-      id: 
-        type: string
-        example: 1
-      name:
-        type: string
-        example: www.google.com
   
   ValidateResponse:
     title: Validation of Target Response
@@ -953,3 +1034,54 @@ definitions:
         items:
           $ref: '#/definitions/WhoisInfo'
         description: A list of Whois information for the hosts.
+  
+  CredentialHost:
+    type: object
+    properties:
+      username:
+        type: string
+      password:
+        type: string
+  RapporteurHost:
+    type: object
+    properties:
+      username:
+        type: string
+      password:
+        type: string
+      is_principal:
+        type: boolean
+  HostRequest:
+    type: object
+    properties:
+      alias: 
+        type: string
+      host:
+        type: string
+      credentials:
+        type: array
+        items:
+           $ref: '#/definitions/CredentialHost'
+      rapporteurs:
+        type: array
+        items:
+           $ref: '#/definitions/RapporteurHost'
+  HostResponse:
+    type: object
+    properties:
+      updated_at:
+        type: string
+      created_at: 
+        type: string
+      alias: 
+        type: string
+      host:
+        type: string
+      credentials:
+        type: array
+        items:
+           $ref: '#/definitions/CredentialHost'
+      rapporteurs:
+        type: array
+        items:
+           $ref: '#/definitions/RapporteurHost'
