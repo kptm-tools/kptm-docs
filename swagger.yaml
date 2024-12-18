@@ -1040,9 +1040,9 @@ definitions:
   RapporteurHost:
     type: object
     properties:
-      username:
+      name:
         type: string
-      password:
+      email:
         type: string
       is_principal:
         type: boolean
