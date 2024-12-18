@@ -158,7 +158,7 @@ paths:
             value:
               error: "Request body contains unknown field: \"name\""
   /api/user:
-    x-summary: User's collection
+    x-summary: Registration of a user
     post:
       summary: Creates a user
       parameters:
@@ -174,7 +174,7 @@ paths:
           schema:
             $ref: "#/definitions/DomainUser"
   /api/user/{userID}:
-    x-summary: User's collection
+    x-summary: User endpoints given a userID
     post:
       summary: Get a Domain User
       parameters:
@@ -273,7 +273,7 @@ paths:
             
    
   /api/host/{hostID}:
-    x-summary: Host collection 
+    x-summary: Host endpoints given a hostID 
     get:
       summary: Get a host
       parameters:
