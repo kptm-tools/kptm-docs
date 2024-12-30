@@ -121,7 +121,7 @@ paths:
               value:
                 statusCode: 200
                 change_password_id: "XjylEgEUH3pFzSrt1JSxx4GYmD3ZvKfff6y3n2iUxqc"
-  /api/tenant:
+  /api/tenants:
     x-summary: Tenants collection
     post:
       summary: Register a new Tenant
@@ -157,7 +157,7 @@ paths:
             BadRequestResponse:
             value:
               error: "Request body contains unknown field: \"name\""
-  /api/user:
+  /api/users:
     x-summary: Registration of a user
     post:
       summary: Creates a user
@@ -173,7 +173,7 @@ paths:
           description: Successful Response containing user data and verificationId that is used to verify email
           schema:
             $ref: "#/definitions/DomainUser"
-  /api/user/{userID}:
+  /api/users/{userID}:
     x-summary: User endpoints given a userID
     post:
       summary: Get a Domain User
@@ -206,7 +206,7 @@ paths:
             BadRequestResponse:
             value:
               error: "Invalid uuid: \"5\""    
-  /api/user/{userID}/verify-email:  
+  /api/users/{userID}/verify-email:  
     x-summary: User's collection
     post:
       summary: Verify email of user 
@@ -240,7 +240,7 @@ paths:
             BadRequestResponse:
             value:
               error: "Invalid uuid: \"5\"" 
-  /api/host:
+  /api/hosts:
     x-summary: Host collection
     post:
       summary: Register a host
@@ -272,7 +272,7 @@ paths:
               $ref: "#/definitions/HostResponse"
             
    
-  /api/host/{hostID}:
+  /api/hosts/{hostID}:
     x-summary: Host endpoints given a hostID 
     get:
       summary: Get a host
@@ -323,10 +323,12 @@ paths:
         200:
           description: Successful Response
           schema:
-            type: string
-            example: Done
+            type: object
+            properties:
+              deleted:
+                type: boolean
             
-  /api/host/validate:
+  /api/hosts/validate:
     x-summary: Validate host that can be IP or domain
     post:
       summary: Validate host
@@ -336,7 +338,7 @@ paths:
           schema: 
             type: object
             properties:
-              host:
+              value:
                 type: string
           required: true
        
@@ -344,7 +346,8 @@ paths:
         200:
           description: Successful Response
           schema:
-            $ref: "#/definitions/ValidateResponse"
+            type: string
+            example: verified
   /scanner:
     x-summary: Operations related to scanning
     get:
@@ -1033,6 +1036,10 @@ definitions:
   CredentialHost:
     type: object
     properties:
+      id:
+        type: string
+      host_id:
+        type: string
       username:
         type: string
       password:
@@ -1064,13 +1071,18 @@ definitions:
   HostResponse:
     type: object
     properties:
+      id:
+        type: string
+      
       updated_at:
         type: string
       created_at: 
         type: string
-      alias: 
+      name: 
         type: string
-      host:
+      domain:
+        type: string
+      ip:
         type: string
       credentials:
         type: array
