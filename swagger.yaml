@@ -878,12 +878,10 @@ definitions:
     title: Scan
     type: object
     properties:
-      targets:
+      host_ids:
         type: array
         items:
           type: string
-      schedule:
-        type: string
   ScanGeneralResponse:
     title: Scan General Response
     type: array
