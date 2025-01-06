@@ -301,7 +301,7 @@ paths:
         - name: body
           in: body
           schema: 
-            $ref: "#/definitions/HostRequest"
+            $ref: "#/definitions/HostRequestPut"
         
       responses:
         200:
@@ -1030,8 +1030,26 @@ definitions:
         items:
           $ref: '#/definitions/WhoisInfo'
         description: A list of Whois information for the hosts.
-  
-  CredentialHost:
+ 
+  CredentialHostPut:
+    type: object
+    properties:
+      id:
+        type: string
+      username:
+        type: string
+      password:
+        type: string
+        
+  CredentialHostPost:
+    type: object
+    properties:
+      username:
+        type: string
+      password:
+        type: string
+        
+  CredentialHostResponse:
     type: object
     properties:
       id:
@@ -1054,14 +1072,33 @@ definitions:
   HostRequest:
     type: object
     properties:
-      alias: 
+      value: 
         type: string
-      host:
+      name:
+        type: string
+      value_type:
         type: string
       credentials:
         type: array
         items:
-           $ref: '#/definitions/CredentialHost'
+           $ref: '#/definitions/CredentialHostPost'
+      rapporteurs:
+        type: array
+        items:
+           $ref: '#/definitions/RapporteurHost'
+  HostRequestPut:
+    type: object
+    properties:
+      value: 
+        type: string
+      name:
+        type: string
+      value_type:
+        type: string
+      credentials:
+        type: array
+        items:
+           $ref: '#/definitions/CredentialHostPut'
       rapporteurs:
         type: array
         items:
@@ -1085,7 +1122,7 @@ definitions:
       credentials:
         type: array
         items:
-           $ref: '#/definitions/CredentialHost'
+           $ref: '#/definitions/CredentialHostResponse'
       rapporteurs:
         type: array
         items:
