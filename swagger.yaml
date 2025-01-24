@@ -328,7 +328,7 @@ paths:
               deleted:
                 type: boolean
             
-  /api/hosts/validate:
+  /api/hosts/validate-host:
     x-summary: Validate host that can be IP or domain
     post:
       summary: Validate host
@@ -339,6 +339,26 @@ paths:
             type: object
             properties:
               value:
+                type: string
+          required: true
+       
+      responses:
+        200:
+          description: Successful Response
+          schema:
+            type: string
+            example: verified
+  /api/hosts/validate-alias:
+    x-summary: Validate alias
+    post:
+      summary: Validate name of the host to not be repeated
+      parameters:
+        - name: body
+          in: body
+          schema: 
+            type: object
+            properties:
+              hostname:
                 type: string
           required: true
        
