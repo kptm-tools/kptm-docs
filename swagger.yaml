@@ -368,7 +368,7 @@ paths:
           schema:
             type: string
             example: verified
-  /scanner:
+  /api/scans:
     x-summary: Operations related to scanning
     get:
       summary: Obtains all scannings done by the user
@@ -405,7 +405,7 @@ paths:
             properties:
               id: 
                 type: string
-  /scanner/{id}:
+  /api/scans/{id}:
     x-summary: Operations related to specific scanning
     patch:
       summary: Add comments in the result of scanning
@@ -454,16 +454,16 @@ paths:
           schema:
             type: string
             example: Done  
-  /scanner/{id}/per-tool:
-    x-summary: Path for analist
+  /api/scans/{id}/summary:
+    x-summary: Path for analyst or operator
     get:
-      summary: Obtains results of a given scanning
+      summary: Retrieve the summary of the a given vulnerability scan, including severity counts, total vulnerabilities, variation since the last scan, protection score, and metadata."
       parameters:
         - name: id
           in: path
-          description: Id of scannig
+          description: Id of the scan
           type: string
-          x-example: "1"
+          x-example: "e7991601-e3ea-4d7f-846d-1546e1d129dd"
           required: true
         - name: Authorization
           in: header
@@ -472,11 +472,11 @@ paths:
           type: string
       responses:
         200:
-          description: Successful Response
+          description: Successful response with vulnerability scan results.
           schema:
-            $ref: "#/definitions/ScannerResponse"
+            $ref: "#/definitions/ScanSummaryResponse"
 
-  /scanner/{id}/aggregated:
+  /api/scans/{id}/aggregated:
     x-summary: Path for Client
     get:
       summary: Obtains results of a given scanning
@@ -894,6 +894,66 @@ definitions:
               type: string
             additionalReference:
               type: string
+  ScanSummaryResponse:
+    title: Scanner Response DTO
+    type: object
+    properties:
+      severity_counts:
+        type: "object"
+        description: "Counts of vulnerabilities by severity level."
+        properties:
+          critical:
+            type: "integer"
+            description: "Number of critical vulnerabilities."
+            example: 1
+          high:
+            type: "integer"
+            description: "Number of high vulnerabilities."
+            example: 2
+          medium:
+            type: "integer"
+            description: "Number of medium vulnerabilities."
+            example: 10
+          low:
+            type: "integer"
+            description: "Number of low vulnerabilities."
+            example: 3
+      severity_per_type:
+        type: "object"
+        description: "Dynamic mapping of vulnerability types to their counts."
+        additionalProperties:
+          type: "integer"
+        example:
+          RCE: 4
+          "SQL Injection": 3
+          XSS: 2
+          "Open Port": 1
+      total_vulnerabilities:
+        type: "integer"
+        description: "Total number of vulnerabilities in the scan."
+        example: 16
+      vulnerability_variation:
+        type: "integer"
+        description: "Difference in the total number of vulnerabilities since the last scan. Can be zero, positive, or negative."
+        example: -2
+      protection_score:
+        type: "number"
+        format: "float"
+        description: "Protection score as a float between 0 and 1."
+        example: 0.85
+      metadata:
+        type: "object"
+        description: "Metadata about the scan."
+        properties:
+          host_alias:
+            type: "string"
+            description: "Alias of the scanned host."
+            example: "example.com"
+          scan_date:
+            type: "string"
+            format: "date-time"
+            description: "Date and time of the scan in ISO 8601 format."
+            example: "2025-01-27T14:45:00Z"
   ScanRequest:
     title: Scan
     type: object
