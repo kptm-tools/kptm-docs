@@ -455,7 +455,7 @@ paths:
             type: string
             example: Done  
   /api/scans/{id}/summary:
-    x-summary: Path for analyst or operator
+    x-summary: Summary of a scan
     get:
       summary: Retrieve the summary of the a given vulnerability scan, including severity counts, total vulnerabilities, variation since the last scan, protection score, and metadata."
       parameters:
