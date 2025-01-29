@@ -371,18 +371,21 @@ paths:
   /api/scans:
     x-summary: Operations related to scanning
     get:
-      summary: Obtains all scannings done by the user
+      summary: Retreives a list of all scans performed for said tenant, with detailed scan summary information.
+      description: This endpoint provides an overview of all scans completed by the user. It includes details such as the scan's ID, date, host, the number of vulnerabilities detected, severity counts, scan duration, and the status of each scan.
       parameters:
         - name: Authorization
           in: header
-          description: an authorization header
+          description: An authorization header containing the Bearer token to authenticate the user.
           required: true
           type: string
       responses:
         200:
-          description: Successful Response
+          description: A list of all scans performed within the tenant, containing detailed scan summary information.
           schema:
-            $ref: "#/definitions/ScanGeneralResponse"
+            type: array
+            items:
+              $ref: "#/definitions/ScanSummary"
     post: 
       summary: Create a scanning for a given set of targets and outputs an id of the scanning
       parameters:
@@ -454,10 +457,10 @@ paths:
           schema:
             type: string
             example: Done  
-  /api/scans/{id}/summary:
-    x-summary: Summary of a scan
+  /api/scans/{id}/insights:
+    x-summary: Insights of a scan
     get:
-      summary: Retrieve the summary of the a given vulnerability scan, including severity counts, total vulnerabilities, variation since the last scan, protection score, and metadata."
+      summary: Retrieve the insights of the a given vulnerability scan, including severity counts, total vulnerabilities, variation since the last scan, protection score, and metadata."
       parameters:
         - name: id
           in: path
@@ -474,29 +477,8 @@ paths:
         200:
           description: Successful response with vulnerability scan results.
           schema:
-            $ref: "#/definitions/ScanSummaryResponse"
+            $ref: "#/definitions/ScanInsights"
 
-  /api/scans/{id}/aggregated:
-    x-summary: Path for Client
-    get:
-      summary: Obtains results of a given scanning
-      parameters:
-        - name: id
-          in: path
-          description: Id of scannig
-          type: string
-          x-example: "1"
-          required: true
-        - name: Authorization
-          in: header
-          description: an authorization header
-          required: true
-          type: string
-      responses:
-        200:
-          description: Successful Response
-          schema:
-            $ref: "#/definitions/ScannerSimpleResponse"
   /reports:
     x-summary: Generate reports for user
     post:
@@ -852,49 +834,8 @@ definitions:
               type: string
             comment:
               type: string
-  ScannerSimpleResponse:
-    title: Scanner Simple Response DTO
-    type: object
-    properties:
-      osData:
-        type: object
-        properties:
-          version:
-            type: string
-          vulnerability:
-            type: string
-      portData:
-        type: object
-        properties:
-          portNumber:
-            type: string
-          vulnerability:
-            type: string
-          
-  ScannerResponse:
-    title: Scanner Response DTO
-    type: object
-    properties:
-      tool:
-        type: string
-      failure: 
-        type: string
-      failuresDetail:
-        type: array
-        items:
-          type: object
-          properties:
-            vulnerabilityName:
-              type: string
-            severity:
-              type: string
-            description:
-              type: string
-            affectedAsset:
-              type: string
-            additionalReference:
-              type: string
-  ScanSummaryResponse:
+ 
+  ScanInsights:
     title: Scanner Response DTO
     type: object
     properties:
@@ -945,6 +886,10 @@ definitions:
         type: "object"
         description: "Metadata about the scan."
         properties:
+          scan_id: 
+            type: "string"
+            description: "The uuid of the scan in string format"
+            example: "7b918160-61b4-4c8d-a7bc-40231cbfa59f"
           host_alias:
             type: "string"
             description: "Alias of the scanned host."
@@ -962,24 +907,54 @@ definitions:
         type: array
         items:
           type: string
-  ScanGeneralResponse:
-    title: Scan General Response
-    type: array
-    items:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        dateStart:
-          type: string
-        dateFinishScan:
-          type: string
-        commentGeneral:
-          type: string
-        numberVulnerabilities:
-          type: number
+  ScanSummary:
+    title: Scan Summary Response
+    type: object
+    properties:
+      scan_id:
+        type: string
+        description: The unique identifier of the scan.
+        example: "7136aa73-0291-48d9-99c3-c2dfb072c589"
+      scan_date:
+        type: string
+        description: The date and time when the scan was initiated, in ISO 8601 format.
+        example: "2025-01-29T13:33:37.007298Z"
+      host:
+        type: string
+        description: The name of the host or target system that was scanned.
+        example: "altoro"
+      vulnerabilities:
+        type: integer
+        description: The total number of vulnerabilities detected during the scan.
+        example: 0
+      severities:
+        type: object
+        properties:
+          critical:
+            type: integer
+            description: The number of critical vulnerabilities detected.
+            example: 0
+          high:
+            type: integer
+            description: The number of high-severity vulnerabilities detected.
+            example: 0
+          medium:
+            type: integer
+            description: The number of medium-severity vulnerabilities detected.
+            example: 0
+          low:
+            type: integer
+            description: The number of low-severity vulnerabilities detected.
+            example: 0
+      duration:
+        type: number
+        format: float
+        description: The total duration of the scan in seconds, including any idle or wait times.
+        example: 63873754417.0073
+      status:
+        type: string
+        description: The current status of the scan. Possible values include "Pending", "Completed", "Cancelled", or "Failed".
+        example: "Pending"
   WhoisInfo:
     type: object
     properties:
