@@ -882,6 +882,12 @@ definitions:
         format: "float"
         description: "Protection score as a float between 0 and 1."
         example: 0.85
+      protection_score_variation:
+        type: "number"
+        format: "float"
+        description: "Variation since the host's last scan protection score"
+        example: -0.02
+
       metadata:
         type: "object"
         description: "Metadata about the scan."
