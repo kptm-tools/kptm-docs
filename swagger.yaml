@@ -478,6 +478,38 @@ paths:
           description: Successful response with vulnerability scan results.
           schema:
             $ref: "#/definitions/ScanInsights"
+  /api/scans/{id}/cancel:
+    x-summary: Cancel a scan
+    post:
+      summary: Cancel a scan which is currently in progress.
+      parameters:
+        - name: id
+          in: path
+          description: Id of the scan
+          type: string
+          x-example: "e7991601-e3ea-4d7f-846d-1546e1d129dd"
+          required: true
+        - name: Authorization
+          in: header
+          description: an authorization header
+          required: true
+          type: string
+      responses:
+        200:
+          description: Successful response.
+        409:
+          description: The scan couldn't be cancelled because it has already finished.
+          schema:
+            $ref: "#/definitions/APIError"
+          examples:
+            ConflictResponse:
+            value:
+              error: "scan e4fc3f0d-6363-4cae-90e1-fcadc66c5192 has already finished with status Cancelled"
+        500:
+          description: The server encountered an internal error.
+          schema:
+            $ref: "#/definitions/APIError"
+          
 
   /reports:
     x-summary: Generate reports for user
