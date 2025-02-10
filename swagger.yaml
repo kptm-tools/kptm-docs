@@ -510,7 +510,56 @@ paths:
           schema:
             $ref: "#/definitions/APIError"
           
-
+  /api/scans/{id}/vulnerabilities/summary:
+    x-summary: Summary of a scan's vulnerabilities
+    get: 
+      summary: Get the summary of a scan's detected vulnerabilities.
+      parameters:
+        - name: id
+          in: path
+          description: Id of the scan
+          type: string
+          x-example: "e7991601-e3ea-4d7f-846d-1546e1d129dd"
+          required: true
+        - name: Authorization
+          in: header
+          description: an authorization header
+          required: true
+          type: string
+        - name: severity
+          in: query
+          description: Comma-separated list of severity levels to filter by (Critical, High, Medium, Low). If not provided, all severities are included.
+          required: false
+          type: string
+          x-example: "High,Critical"
+        - name: time_range
+          in: query
+          description: Time range for vulnerability trends (Month, Quarter, Semester). Default is Month.
+          required: false
+          type: string
+          enum:
+            - Month
+            - Quarter
+            - Semester
+          default: Month
+      responses:
+        200:
+          description: Successful response with a summary of the scan's vulnerabilities.
+          schema:
+            $ref: '#/definitions/ScanVulnerabilitySummaryResponse'
+        400:
+          description: Bad Request - Invalid input, e.g., invalid scan ID or severity filter.
+          schema:
+            $ref: '#/definitions/APIError'
+        404:
+          description: Not Found - Scan with the given ID not found.
+          schema:
+            $ref: '#/definitions/APIError'
+        500:
+          description: Internal Server Error - Something went wrong on the server.
+          schema:
+            $ref: '#/definitions/APIError'
+            
   /reports:
     x-summary: Generate reports for user
     post:
@@ -542,25 +591,6 @@ definitions:
       error:  
         type: string
         description: Detailed error information.
-
-  UserRequest:
-    title: Information from user
-    type: object
-    properties:
-      documentIdentifier:
-        type: string
-      name:
-        type: string
-      roleId:
-        type: string
-      notificationURL:
-        type: string
-      notificationEmail:
-        type: string
-    required:
-      - documentIdentifier
-      - name
-      - roleId
 
   LoginRequest:
     title: Login Request
@@ -605,12 +635,7 @@ definitions:
           type: string
       application_id:
         type: string
-  RegisterUserResponse:
-    title: Register User Response
-    type: object
-    properties:
-      verification_id:
-        type: string
+
   VerifyEmailRequest:
     title: Verify Email Request
     type: object
@@ -830,16 +855,6 @@ definitions:
         description: The timestamp (in milliseconds) when the user's email address was verified.
             
   
-  ValidateResponse:
-    title: Validation of Target Response
-    type: object
-    properties:
-      isValid: 
-        type: boolean
-        example: true
-      reason:
-        type: string
-        example: It appears in DNS
   ReportRequest:
     title: Report Request
     type: object
@@ -993,136 +1008,7 @@ definitions:
         type: string
         description: The current status of the scan. Possible values include "Pending", "Completed", "Cancelled", or "Failed".
         example: "Pending"
-  WhoisInfo:
-    type: object
-    properties:
-      domain:
-        $ref: '#/definitions/Domain'
-      registrar:
-        $ref: '#/definitions/Contact'
-      registrant:
-        $ref: '#/definitions/Contact'
-      administrative:
-        $ref: '#/definitions/Contact'
-      technical:
-        $ref: '#/definitions/Contact'
-      billing:
-        $ref: '#/definitions/Contact'
-    # No required array means all properties are optional
 
-  Domain:
-    type: object
-    properties:
-      id:
-        type: string
-        description: The unique identifier of the domain.
-      domain:
-        type: string
-        description: The domain name.
-      punycode:
-        type: string
-        description: The punycode representation of the domain name.
-      name:
-        type: string
-        description: The name of the domain.
-      extension:
-        type: string
-        description: The domain extension (e.g., .com, .org).
-      whois_server:
-        type: string
-        description: The Whois server for the domain.
-      status:
-        type: array
-        items:
-          type: string
-        description: The status of the domain.
-      name_servers:
-        type: array
-        items:
-          type: string
-        description: The nameservers associated with the domain.
-      dnssec:
-        type: boolean
-        description: Indicates if the domain has DNSSEC enabled.
-      created_date:
-        type: string
-        format: date-time
-        description: The date the domain was created.
-      created_date_in_time:
-        type: string
-        format: date-time
-        description: The creation date as a `time.Time` object.
-      updated_date:
-        type: string
-        format: date-time
-        description: The last update date of the domain.
-      updated_date_in_time:
-        type: string
-        format: date-time
-        description: The last update date as a `time.Time` object.
-      expiration_date:
-        type: string
-        format: date-time
-        description: The expiration date of the domain.
-      expiration_date_in_time:
-        type: string
-        format: date-time
-        description: The expiration date as a `time.Time` object.
-
-  Contact:
-    type: object
-    properties:
-      id:
-        type: string
-        description: The unique identifier for the contact.
-      name:
-        type: string
-        description: The name of the contact.
-      organization:
-        type: string
-        description: The organization associated with the contact.
-      street:
-        type: string
-        description: The street address of the contact.
-      city:
-        type: string
-        description: The city of the contact.
-      province:
-        type: string
-        description: The province or state of the contact.
-      postal_code:
-        type: string
-        description: The postal code of the contact.
-      country:
-        type: string
-        description: The country of the contact.
-      phone:
-        type: string
-        description: The contact's phone number.
-      phone_ext:
-        type: string
-        description: The phone extension, if any.
-      fax:
-        type: string
-        description: The fax number of the contact.
-      fax_ext:
-        type: string
-        description: The fax extension, if any.
-      email:
-        type: string
-        description: The email address of the contact.
-      referral_url:
-        type: string
-        description: A referral URL associated with the contact.
-
-  WhoIsEventResult:
-    type: object
-    properties:
-      hosts:
-        type: array
-        items:
-          $ref: '#/definitions/WhoisInfo'
-        description: A list of Whois information for the hosts.
  
   CredentialHostPut:
     type: object
@@ -1220,3 +1106,133 @@ definitions:
         type: array
         items:
            $ref: '#/definitions/RapporteurHost'
+
+  ScanVulnerabilitySummaryResponse:
+    type: object
+    properties:
+      scan_id:
+        type: string
+        description: ID of the scan.
+        x-example: "e7991601-e3ea-4d7f-846d-1546e1d129dd"
+      domain:
+        type: string
+        description: Domain name of the scanned target.
+        x-example: "google.com"
+      general_summary:
+        $ref: '#/definitions/GeneralSummary'
+      vulnerabilities_by_category:
+        $ref: '#/definitions/VulnerabilitiesByCategory'
+      vulnerability_trends:
+        $ref: '#/definitions/VulnerabilityTrends'
+    example:
+      scan_id: "e7991601-e3ea-4d7f-846d-1546e1d129dd"
+      domain: "google.com"
+      general_summary:
+        total_vulnerabilities: 40
+        severity_counts:
+          Critical: 10
+          High: 10
+          Medium: 10
+          Low: 10
+      vulnerabilities_by_category:
+        category_data:
+          - category: "XSS"
+            count: 15
+          - category: "SQL Injection"
+            count: 20
+          - category: "CSRF"
+            count: 7
+      vulnerability_trends:
+        time_periods:
+          - time_period: "Jan"
+            vulnerability_count: 25 
+          - time_period: "Feb"
+            vulnerability_count: 30
+          - time_period: "Mar"
+            vulnerability_count: 40
+        average_vulnerability_count: 65.4
+
+  GeneralSummary:
+    type: object
+    properties:
+      total_vulnerabilities:
+        type: integer
+        description: Total number of vulnerabilities found in the scan.
+        x-example: 40
+      severity_counts:
+        $ref: '#/definitions/SeverityCounts'
+
+  SeverityCounts:
+    type: object
+    properties:
+      Critical:
+        type: integer
+        description: Count of Critical severity vulnerabilities.
+        x-example: 10
+      High:
+        type: integer
+        description: Count of High severity vulnerabilities.
+        x-example: 10
+      Medium:
+        type: integer
+        description: Count of Medium severity vulnerabilities.
+        x-example: 10
+      Low:
+        type: integer
+        description: Count of Low severity vulnerabilities.
+        x-example: 10
+
+  VulnerabilitiesByCategory:
+    type: object
+    properties:
+      category_data:
+        type: array
+        items: 
+          $ref: '#/definitions/CategoryVulnerabilityData'
+        description: Array of vulnerability category data, each item containing category name and count.
+
+  CategoryVulnerabilityData:
+    type: object
+    properties:
+      category:
+        type: string
+        description: Name of the vulnerability category.
+        x-example: "XSS"
+      count:
+        type: integer
+        description: Number of vulnerabilities in this category.
+        x-example: 15
+
+
+
+  VulnerabilityTrends:
+    type: object
+    properties:
+      time_periods:
+        type: array
+        items:
+          $ref: '#/definitions/TimePeriodData'
+        description: Array of time period labels for the trend data, each item containing time_period and count.
+      vulnerability_counts:
+        type: array
+        items:
+          type: integer
+        description: Array of vulnerability counts corresponding to each time period.
+        x-example: [25, 30, 40, 35, 50, 60, 90, 80, 70, 75, 85, 95]
+      average_vulnerability_count:
+        type: number
+        format: float
+        description: Average vulnerability count over the selected time period (optional).
+        x-example: 65.4
+
+  TimePeriodData:
+    type: object
+    properties:
+      time_period:
+        type: string
+        description: Time period of the trend dat 
+        x-example: "Jan"
+      count:
+        type: integer
+        description: Number of vulnerabilities found in this time period.
+        x-example: 15
