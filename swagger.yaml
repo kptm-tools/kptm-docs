@@ -19,6 +19,8 @@ paths:
     x-summary: Login
     post:
       summary: Login to KPTM Tools
+      tags:
+        - Users      
       parameters:
         - name: body
           in: body
@@ -81,6 +83,8 @@ paths:
     x-summary: Reset-Password
     post:
       summary: Reset the password given an email and applicationId. This will send an email with a given code that will be used to change password.
+      tags:
+        - Users    
       parameters:
         - name: body
           in: body
@@ -103,6 +107,8 @@ paths:
     x-summary: Change-Password
     post:
       summary: Given the change_password_id, we can do a change of the password
+      tags:
+        - Users
       parameters:
         - name: body
           in: body
@@ -125,6 +131,8 @@ paths:
     x-summary: Tenants collection
     post:
       summary: Register a new Tenant
+      tags:
+        - Tenants
       parameters:
         - name: body
           in: body
@@ -160,6 +168,8 @@ paths:
   /api/users:
     x-summary: Registration of a user
     post:
+      tags:
+        - Users
       summary: Creates a user
       parameters:
         - name: body
@@ -177,6 +187,8 @@ paths:
     x-summary: User endpoints given a userID
     post:
       summary: Get a Domain User
+      tags:
+        - Users
       parameters:
         - name: userID
           in: path
@@ -210,6 +222,8 @@ paths:
     x-summary: User's collection
     post:
       summary: Verify email of user 
+      tags:
+        - Users
       parameters:
         - name: userID
           in: path
@@ -244,6 +258,8 @@ paths:
     x-summary: Host collection
     post:
       summary: Register a host
+      tags:
+        - Hosts
       parameters:
         - name: body
           in: body
@@ -262,7 +278,8 @@ paths:
             
     get:
       summary: Obtains all hosts of a tenant
-      
+      tags:
+        - Hosts
       responses:
         200:
           description: Successful Response
@@ -276,6 +293,8 @@ paths:
     x-summary: Host endpoints given a hostID 
     get:
       summary: Get a host
+      tags:
+        - Hosts
       parameters:
         - name: hostID
           in: path
@@ -291,6 +310,8 @@ paths:
             $ref: "#/definitions/HostResponse"
     patch:
       summary: Modify a host
+      tags:
+        - Hosts      
       parameters:
         - name: hostID
           in: path
@@ -311,6 +332,8 @@ paths:
             example: Done
     delete:
       summary: Delete a host
+      tags:
+        - Hosts      
       parameters:
         - name: hostID
           in: path
@@ -332,6 +355,8 @@ paths:
     x-summary: Validate host that can be IP or domain
     post:
       summary: Validate host
+      tags:
+        - Hosts
       parameters:
         - name: body
           in: body
@@ -352,6 +377,8 @@ paths:
     x-summary: Validate alias
     post:
       summary: Validate name of the host to not be repeated
+      tags:
+        - Hosts
       parameters:
         - name: body
           in: body
@@ -373,6 +400,8 @@ paths:
     get:
       summary: Retreives a list of all scans performed for said tenant, with detailed scan summary information.
       description: This endpoint provides an overview of all scans completed by the user. It includes details such as the scan's ID, date, host, the number of vulnerabilities detected, severity counts, scan duration, and the status of each scan.
+      tags:
+        - Scans
       parameters:
         - name: Authorization
           in: header
@@ -388,6 +417,8 @@ paths:
               $ref: "#/definitions/ScanSummary"
     post: 
       summary: Create a scanning for a given set of targets and outputs an id of the scanning
+      tags:
+        - Scans
       parameters:
         - name: Authorization
           in: header
@@ -412,6 +443,8 @@ paths:
     x-summary: Operations related to specific scanning
     patch:
       summary: Add comments in the result of scanning
+      tags:
+        - Scans
       parameters:
         - name: id
           in: path
@@ -439,6 +472,8 @@ paths:
     
     delete:
       summary: Delete scan
+      tags:
+        - Scans
       parameters:
         - name: id
           in: path
@@ -461,6 +496,8 @@ paths:
     x-summary: Insights of a scan
     get:
       summary: Retrieve the insights of the a given vulnerability scan, including severity counts, total vulnerabilities, variation since the last scan, protection score, and metadata."
+      tags:
+        - Scans
       parameters:
         - name: id
           in: path
@@ -482,6 +519,8 @@ paths:
     x-summary: Cancel a scan
     post:
       summary: Cancel a scan which is currently in progress.
+      tags:
+        - Scans
       parameters:
         - name: id
           in: path
@@ -514,6 +553,8 @@ paths:
     x-summary: Summary of a scan's vulnerabilities
     get: 
       summary: Get the summary of a scan's detected vulnerabilities.
+      tags:
+        - Reports
       parameters:
         - name: id
           in: path
@@ -560,28 +601,35 @@ paths:
           schema:
             $ref: '#/definitions/APIError'
             
-  /reports:
-    x-summary: Generate reports for user
-    post:
-      summary: Return a report of findings obtained from the vulnerabilities and gathered information
+  /api/reports:
+    get:
+      summary: Get all reports associated to the authenticated tenant
+      description: Retrieves a list of reports associated with the currently authenticated user's tenant. Reports are summarized with domain, IP, scan date, total severities, and comment status. 
+      tags: 
+        - Reports
       parameters:
         - name: Authorization
           in: header
           description: an authorization header
           required: true
           type: string
-        - name: body
-          in: body
-          description: Contains the periodicity of the request
-          required: true
-          schema:
-            $ref: "#/definitions/ReportRequest"
       responses:
         200:
-          description: Successful Response
+          description: Successful Response - returns a list of reports
           schema:
-            type: string
-            example: http://bucket/file
+            type: array
+            items:
+              $ref: '#/definitions/ReportResponse'
+        401:
+          description: Unauthorized - Authentication required
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/APIError'
+        500:
+          description: Internal Server Error - Something went wrong on the server.
+          schema:
+            $ref: '#/definitions/APIError'
     
 definitions:
 
@@ -1236,3 +1284,30 @@ definitions:
         type: integer
         description: Number of vulnerabilities found in this time period.
         x-example: 15
+  ReportResponse:
+    type: object
+    properties:
+      domain:
+        type: string
+        description: The domain name of the report.
+        example: "Google.com"
+      ip:
+        type: string
+        description: The IP address associated with the domain.
+        example: "192.168.0.1"
+      scan_date:
+        type: string
+        description: The date and time when the scan was initiated, in ISO 8601 format.
+        example: "2025-01-29T13:33:37.007298Z"
+      total_severities:
+        type: integer
+        description: The total number of severities found in the scan.
+        example: 40
+      comment_status:
+        type: string
+        description: The current comment status of the report.
+        enum:
+          - "PENDING"
+          - "NEW COMMENT"
+          - "CRITICAL"
+        example: "PENDING"
