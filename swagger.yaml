@@ -1287,6 +1287,10 @@ definitions:
   ReportResponse:
     type: object
     properties:
+      scan_id:
+        type: string
+        description: The UUID of the scan associated to the report in string format.
+        example: "7b918160-61b4-4c8d-a7bc-40231cbfa59f"
       domain:
         type: string
         description: The domain name of the report.
