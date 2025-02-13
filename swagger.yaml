@@ -548,6 +548,24 @@ paths:
           description: The server encountered an internal error.
           schema:
             $ref: "#/definitions/APIError"
+  /api/scorecard-trends:
+    get:
+      summary: Get the scorecard trends
+      tags:
+        - Scans
+      parameters:
+        - name: Authorization
+          in: header
+          description: an authorization header
+          required: true
+          type: string      
+      responses:
+        200:
+          description: Successful response with the scorecard trends of all hosts associated to the tenant.
+          schema:
+            type: array
+            items: 
+              $ref: '#/definitions/ScoreCardTrendResponse'
           
   /api/scans/{id}/vulnerabilities/summary:
     x-summary: Summary of a scan's vulnerabilities
@@ -1315,3 +1333,25 @@ definitions:
           - "NEW COMMENT"
           - "CRITICAL"
         example: "PENDING"
+  ScoreCardTrendResponse:
+    type: object
+    properties:
+      alias:
+        type: string
+        description: The host's alias.
+        example: "Ovofinance 2"
+      oldest_score:
+        type: number
+        x-nullable: true
+        description: Oldest protection score within the date range, if any. Null if no scan in range.
+        example: 0.50
+      latest_score:
+        type: number
+        description: Latest protection score within the date range, if any. Null if no scan in range.
+        x-nullable: true
+        example: 0.60
+      latest_score_grade:
+        type: string
+        description: Grade associated with the latest score (A, B, C, D, F), if latest score exists. Null if no scan in range.
+        x-nullable: true
+        example: "A"
