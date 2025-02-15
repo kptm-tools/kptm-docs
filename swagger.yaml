@@ -416,7 +416,7 @@ paths:
             items:
               $ref: "#/definitions/ScanSummary"
     post: 
-      summary: Create a scanning for a given set of targets and outputs an id of the scanning
+      summary: Create a scanning for a given hostID
       tags:
         - Scans
       parameters:
@@ -435,10 +435,8 @@ paths:
         200:
           description: Successful Response
           schema:
-            type: object
-            properties:
-              id: 
-                type: string
+            $ref: "#/definitions/ScanResponseCreation"
+            
   /api/scans/{id}:
     x-summary: Operations related to specific scanning
     patch:
@@ -1022,10 +1020,12 @@ definitions:
     title: Scan
     type: object
     properties:
-      host_ids:
-        type: array
-        items:
-          type: string
+      host_id:
+        type: integer
+      schedule_at:
+        type: string
+      is_repeat:
+        type: boolean
   ScanSummary:
     title: Scan Summary Response
     type: object
@@ -1355,3 +1355,34 @@ definitions:
         description: Grade associated with the latest score (A, B, C, D, F), if latest score exists. Null if no scan in range.
         x-nullable: true
         example: "A"
+  ScanResponseCreation:
+    type: object
+    properties:
+      id: 
+        type: string
+      tenant_id: 
+        type: string
+      operator_id: 
+        type: string
+      host_id: 
+        type: integer
+      target: 
+        type: object
+        properties:
+          alias:
+            type: string
+          value: 
+            type: string
+          type: 
+            type: string
+
+      created_at: 
+        type: string
+      updated_at: 
+        type: string
+      started_at: 
+        type: string
+      ended_at:
+        type: string
+      status: 
+        type: string
