@@ -556,7 +556,19 @@ paths:
           in: header
           description: an authorization header
           required: true
-          type: string      
+          type: string 
+        - name: from_date
+          in: query
+          description: Filter scorecard trends to include data from this date (YYYY-MM-DD).
+          required: false
+          type: string
+          format: date
+        - name: to_date
+          in: query
+          description: Filter scorecard trends to include data up to this date (YYYY-MM-DD).
+          required: false
+          type: string
+          format: date
       responses:
         200:
           description: Successful response with the scorecard trends of all hosts associated to the tenant.
