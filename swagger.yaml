@@ -601,7 +601,7 @@ paths:
           required: false
           type: string
           x-example: "High,Critical"
-        - name: time_range
+        - name: time_period
           in: query
           description: Time range for vulnerability trends (Month, Quarter, Semester). Default is Month.
           required: false
