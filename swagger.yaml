@@ -556,19 +556,7 @@ paths:
           in: header
           description: an authorization header
           required: true
-          type: string 
-        - name: from_date
-          in: query
-          description: Filter scorecard trends to include data from this date (YYYY-MM-DD).
-          required: false
-          type: string
-          format: date
-        - name: to_date
-          in: query
-          description: Filter scorecard trends to include data up to this date (YYYY-MM-DD).
-          required: false
-          type: string
-          format: date
+          type: string      
       responses:
         200:
           description: Successful response with the scorecard trends of all hosts associated to the tenant.
@@ -601,7 +589,7 @@ paths:
           required: false
           type: string
           x-example: "High,Critical"
-        - name: time_period
+        - name: time_range
           in: query
           description: Time range for vulnerability trends (Month, Quarter, Semester). Default is Month.
           required: false
@@ -628,6 +616,80 @@ paths:
           description: Internal Server Error - Something went wrong on the server.
           schema:
             $ref: '#/definitions/APIError'
+  
+  /api/scan-schedules:
+    x-summary: Operations related to scan schedule
+    get:
+      summary: Retreives a list of all scan schedules 
+      tags:
+        - ScanSchedules
+      parameters:
+        - name: Authorization
+          in: header
+          description: An authorization header containing the Bearer token to authenticate the user.
+          required: true
+          type: string
+      responses:
+        200:
+          description: A list of all scan schedules.
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/ScanScheduleResponse"
+  
+  /api/scan-schedules/{id}:
+    x-summary: Operations related to specific scan scheduling
+    patch:
+      summary: Edit scan scheduling of specific record
+      tags:
+        - ScanSchedules
+      parameters:
+        - name: id
+          in: path
+          description: Id of scan schedule
+          type: string
+          x-example: "1"
+          required: true
+        - name: body
+          in: body
+          description: Contains the DTO Request for editing scan scheduling
+          required: true
+          schema:
+            $ref: "#/definitions/ScanSchedulePatchRequest"
+        - name: Authorization
+          in: header
+          description: an authorization header
+          required: true
+          type: string
+      responses:
+        200:
+          description: Successful Response
+          schema:
+            type: string
+            example: Done
+    
+    delete:
+      summary: Delete scan schedule
+      tags:
+        - ScanSchedules
+      parameters:
+        - name: id
+          in: path
+          description: Id of scan schedule
+          type: string
+          x-example: "1"
+          required: true
+        - name: Authorization
+          in: header
+          description: an authorization header
+          required: true
+          type: string
+      responses:
+        200:
+          description: Successful Response
+          schema:
+            type: string
+            example: Done  
             
   /api/reports:
     get:
@@ -957,6 +1019,22 @@ definitions:
               type: string
             comment:
               type: string
+  
+  ScanSchedulePatchRequest:
+    title: Request for ScanSchedule Patch
+    type: object
+    properties:
+      schedule_at:
+        type: string
+        description: "date of schedule"
+        example: "2025-02-20 10:10:10"
+      quantity: 
+        type: string
+        example:  1
+      unit_of_frequency:
+        description: "This can be Day, Week, Month, Year"
+        type: string
+        example: Month
  
   ScanInsights:
     title: Scanner Response DTO
@@ -1086,6 +1164,31 @@ definitions:
         type: string
         description: The current status of the scan. Possible values include "Pending", "Completed", "Cancelled", or "Failed".
         example: "Pending"
+        
+  ScanScheduleResponse:
+    title: Scan Schedule Response
+    type: object
+    properties:
+      id:
+        type: string
+        description: An integer value
+        example: 1
+      created_date:
+        type: string
+        description: The date and time when the scan schedule.
+        example: "2025-01-29T13:33:37.007298Z"
+      host:
+        type: string
+        description: The name of the host or target system that was scanned.
+        example: "altoro"
+      frequency:
+        type: string
+        description: quantity of given period name
+        example: "Every ten days"
+      scheduled_date:
+        type: string
+        description: The date and time of the next scan schedule.
+        example: "2025-01-29T13:33:37.007298Z"
 
  
   CredentialHostPut:
