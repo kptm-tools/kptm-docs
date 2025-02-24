@@ -739,19 +739,19 @@ paths:
           required: true
           type: string
       responses:
-        '200':
+        200:
           description: Successful response with a list of vulnerabilities for the scan.
           schema:
             $ref: '#/definitions/ScanVulnerabilityItemsResponse'
-        '400':
+        400:
           description: Bad Request - Invalid scan ID.
           schema:
             $ref: '#/definitions/APIError'
-        '404':
+        404:
           description: Not Found - Scan with the given ID not found.
           schema:
             $ref: '#/definitions/APIError'
-        '500':
+        500:
           description: Internal Server Error - Something went wrong on the server.
           schema:
               $ref: '#/definitions/APIError'
