@@ -720,7 +720,42 @@ paths:
           description: Internal Server Error - Something went wrong on the server.
           schema:
             $ref: '#/definitions/APIError'
-    
+  
+  /api/scans/{id}/vulnerabilities:
+    get:
+      summary: Retrieve a list of vulnerabilities associated with a specific scan.
+      tags:
+        - Reports
+      parameters:
+        - name: id
+          in: path
+          description: ID of the scan to retrieve vulnerabilities for
+          type: string
+          required: true
+          x-example: "e7991601-e3ea-4d7f-846d-1546e1d129dd"
+        - name: Authorization
+          in: header
+          description: An authorization header
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Successful response with a list of vulnerabilities for the scan.
+          schema:
+            $ref: '#/definitions/ScanVulnerabilityItemsResponse'
+        '400':
+          description: Bad Request - Invalid scan ID.
+          schema:
+            $ref: '#/definitions/APIError'
+        '404':
+          description: Not Found - Scan with the given ID not found.
+          schema:
+            $ref: '#/definitions/APIError'
+        '500':
+          description: Internal Server Error - Something went wrong on the server.
+          schema:
+              $ref: '#/definitions/APIError'
+  
 definitions:
 
   APIError:
@@ -991,18 +1026,6 @@ definitions:
         type: integer
         format: int64
         description: The timestamp (in milliseconds) when the user's email address was verified.
-            
-  
-  ReportRequest:
-    title: Report Request
-    type: object
-    properties:
-      period:
-        type: string
-      scans:
-        type: array
-        items:
-          type: string
   
   ScanPatchRequest:
     title: Request for Scan Patch
@@ -1501,3 +1524,73 @@ definitions:
         type: string
       status: 
         type: string
+  
+  ScanVulnerabilityItemsResponse:
+    title: ScanVulnerabilityItemsResponse
+    type: object
+    properties:
+      scan_date:
+        type: string
+        format: date-time
+        description: Date of the scan
+      alias:
+        type: string
+        description: Scan alias
+      total_vulnerabilities:
+        type: integer
+        description: Total number of vulnerabilities found
+      severity_counts:
+        $ref: '#/definitions/SeverityCounts'
+      vulnerabilities:
+        type: array
+        items:
+          $ref: '#/definitions/ScanVulnerabilityItem'
+  ScanVulnerabilityItem:
+    title: ScanVulnerabilityItem
+    type: object
+    properties:
+      id:
+        type: integer
+        description: ID of the vulnerability
+      name:
+        type: string
+        description: Name of the vulnerability
+      severity:
+        type: string
+        description: Severity level of the vulnerability
+      max_cvss:
+        type: number
+        format: float
+        description: Maximum CVSS score
+      risk_score:
+        type: number
+        format: float
+        description: Risk score of the vulnerability
+      impact_score:
+        type: number
+        format: float
+        description: Impact score of the vulnerability
+      likelihood:
+        type: string
+        description: Likelihood of the vulnerability being exploited
+      access:
+        type: string
+        description: Access vector of the vulnerability
+      complexity:
+        type: string
+        description: Complexity of exploiting the vulnerability
+      privileges:
+        type: string
+        description: Privileges required to exploit the vulnerability
+      exploitability:
+        type: string
+        description: Exploitability of the vulnerability
+      comment:
+        type: string
+        description: Comment on the vulnerability
+      references:
+        type: array
+        items:
+          type: string
+          description: List of references for the vulnerability
+
