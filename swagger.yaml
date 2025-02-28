@@ -758,7 +758,7 @@ paths:
 
   /api/vulnerabilities/{id}:
     get:
-      sumamry: Get details of a specific vulnerability.
+      summary: Get details of a specific vulnerability.
       tags:
         - Vulnerabilities
       parameters:
@@ -1621,6 +1621,9 @@ definitions:
       exploitability:
         type: string
         description: Exploitability of the vulnerability
+      description:
+        type: string
+        description: Brief description (1 paragraph) of the vulnerability
       comment:
         type: string
         description: Comment on the vulnerability
@@ -1644,11 +1647,9 @@ definitions:
       host:
         $ref: '#/definitions/HostItem'
       port:
-        $ref: '#definitions/PortItem'
-        description: Port item details, omitted if empty.
+        $ref: '#/definitions/PortItem'
       operating_system:
-        $ref: '#definitions/OSItem'
-        description: Operating System item details, omitted if empty.
+        $ref: '#/definitions/OSItem'
       name: 
         type: string 
         description: Name of the vulnerability. # NEW DEFINITION
@@ -1682,6 +1683,9 @@ definitions:
       exploitability: 
         type: string 
         description: Exploitability of the vulnerability. 
+      description:
+        type: string
+        description: A brief description (1 paragraph) of the vulnerability.
       comment: 
         type: string 
         description: Analyst comment on the vulnerability. Empty string if none. 
@@ -1715,6 +1719,7 @@ definitions:
 
   PortItem: 
     title: Port Item 
+    description: Port item details, omitted if empty.
     type: object 
     properties: 
       id: 
@@ -1726,7 +1731,8 @@ definitions:
         description: Port protocol (e.g., tcp). 
 
   OSItem: 
-    title: OS Item 
+    title: OS Item        
+    description: Operating System item details, omitted if empty.
     type: object 
     properties: 
       name: 
