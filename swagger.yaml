@@ -556,7 +556,19 @@ paths:
           in: header
           description: an authorization header
           required: true
-          type: string      
+          type: string     
+        - name: from_date
+          in: query
+          description: Filter trends to scores collected after or on this date. Must follow DateOnly format e.g. '2006-01-02'
+          required: false
+          type: string
+          format: date
+        - name: to_date
+          in: query
+          description: Filter trends to scores collected before or on this date. Must follow DateOnly format e.g. '2006-01-02'
+          required: false
+          type: string
+          format: date
       responses:
         200:
           description: Successful response with the scorecard trends of all hosts associated to the tenant.
@@ -564,6 +576,14 @@ paths:
             type: array
             items: 
               $ref: '#/definitions/ScoreCardTrendResponse'
+        400:
+          description: Bad Request. Returned if the 'from_date' or 'to_date' query parameters are invalid.
+          schema:
+            $ref: '#/definitions/APIError'
+        500:
+          description: Internal Server Error. Returned if there was an error retrieving the scorecard trends.
+          schema:
+            $ref: '#/definitions/APIError'
           
   /api/scans/{id}/vulnerabilities/summary:
     x-summary: Summary of a scan's vulnerabilities
@@ -1814,4 +1834,3 @@ definitions:
       cvss_v3_vector: 
         type: string 
         description: CVSS V3 vector, nullable. 
-
