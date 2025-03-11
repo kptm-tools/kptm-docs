@@ -720,7 +720,76 @@ paths:
           description: Internal Server Error - Something went wrong on the server.
           schema:
             $ref: '#/definitions/APIError'
-    
+  
+  /api/dashboards:
+    x-summary: Dashboard operations
+    get:
+      summary: Retrieve tenant dashboard data
+      description: Retrieves comprehensive dashboard data for a tenant, including overall security posture, vulnerability trends, host severity heat map, and last scan details.
+      tags: 
+        - Dashboard
+      parameters:
+        - name: Authorization
+          in: header
+          description: an authorization header
+          required: true
+          type: string
+        - name: host_ids
+          in: query
+          description: Comma-separated list of host IDs to filter dashboard data.
+          required: false
+          type: string
+          x-example: "1,2,3"
+        - name: trends_time_period
+          in: query
+          description: Time period to filter vulnerability trends.
+          required: false
+          type: string
+          enum:
+            - Month
+            - Quarter
+            - Semester
+          default: Month
+          x-example: Month
+        - name: trends_severity
+          in: query
+          description: Comma-separated list of severity levels to filter vulnerability trends.
+          required: false
+          type: string
+          x-example: "High,Critical"
+      responses:
+        200:
+          description: Successful response - Returns tenant dashboard data.
+          schema: 
+            $ref: '#/definitions/TenantDashboardData'
+          examples:
+            SuccessfulResponse:
+              value:
+                overall_security_posture:
+                  score: 75
+                  variation: 5
+                host_severity_heat_map: []
+                vulnerability_trends: []
+                last_scan:
+                  host_alias: google.com
+                  scan_date: "2024-12-12T00:00:00Z"
+                  severity_counts:
+                    critical: 10
+                    high: 40
+                    low: 50
+                    medium: 30
+                  total_vulnerabilities: 140
+                  total_vulnerabilities_variation: 10
+                hosts_with_greatest_vulnerabilities: []
+        400:
+          description: Bad Request - Invalid input, e.g., invalid host_ids, time_period, or severity filter.
+          schema:
+            $ref: '#/definitions/APIError'
+        500:
+          description: Internal Server Error - Something went wrong on the server.
+          schema:
+            $ref: '#/definitions/APIError'
+
 definitions:
 
   APIError:
@@ -1357,19 +1426,19 @@ definitions:
   SeverityCounts:
     type: object
     properties:
-      Critical:
+      critical:
         type: integer
         description: Count of Critical severity vulnerabilities.
         x-example: 10
-      High:
+      high:
         type: integer
         description: Count of High severity vulnerabilities.
         x-example: 10
-      Medium:
+      medium:
         type: integer
         description: Count of Medium severity vulnerabilities.
         x-example: 10
-      Low:
+      low:
         type: integer
         description: Count of Low severity vulnerabilities.
         x-example: 10
@@ -1512,3 +1581,77 @@ definitions:
         type: string
       status: 
         type: string
+  TenantDashboardData:
+    type: object
+    properties:
+      overall_security_posture:
+        $ref: '#/definitions/OverallSecurityPostureData'
+      host_severity_heat_map:
+        type: array
+        items:
+          $ref: '#/definitions/HostAliasSeverityCountPair'
+      vulnerability_trends:
+        type: array
+        items:
+          $ref: '#/definitions/ServiceTimePeriod'
+      last_scan:
+        $ref: '#/definitions/LastScanData'
+      hosts_with_greatest_vulnerabilities:
+        type: array
+        items:
+          $ref: '#/definitions/HostAliasVulnerabilityPair'
+  OverallSecurityPostureData:
+    type: object
+    properties:
+      score:
+        type: number
+        format: float
+        description: Overall security score.
+      variation:
+        type: number
+        format: float
+        description: Variation in security score.
+  HostAliasSeverityCountPair:
+    type: object
+    properties:
+      alias:
+        type: string
+        description: Alias of the host
+      severity_count:
+        $ref: '#/definitions/SeverityCounts'
+  ServiceTimePeriod:
+    type: object
+    properties:
+      time_period:
+        type: string
+        description: Time period in string format
+      vulnerability_count:
+        type: number
+        description: Number of vulnerabilities found in said time period.
+  LastScanData:
+    type: object
+    properties:
+      host_alias:
+        type: string
+        description: Last scan's host alias.
+      total_vulnerabilities:
+        type: integer
+        description: Total vulnerabilities found in the last scan.
+      total_vulnerabilities_variation:
+        type: integer
+        description: Variation in total vulnerabilities compared to the previous scan.
+      severity_counts:
+        $ref: '#/definitions/SeverityCounts'
+      scan_date:
+        type: string
+        format: date-time
+        description: Date and time of the last scan.
+  HostAliasVulnerabilityPair:
+    type: object
+    properties:
+      alias:
+        type: string
+        description: Alias of the host
+      vulnerability_count:
+        type: number
+        description: Count of vulnerabilities found for the host.
