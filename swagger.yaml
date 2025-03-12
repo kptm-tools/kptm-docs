@@ -556,7 +556,19 @@ paths:
           in: header
           description: an authorization header
           required: true
-          type: string      
+          type: string     
+        - name: from_date
+          in: query
+          description: Filter trends to scores collected after or on this date. Must follow DateOnly format e.g. '2006-01-02'
+          required: false
+          type: string
+          format: date
+        - name: to_date
+          in: query
+          description: Filter trends to scores collected before or on this date. Must follow DateOnly format e.g. '2006-01-02'
+          required: false
+          type: string
+          format: date
       responses:
         200:
           description: Successful response with the scorecard trends of all hosts associated to the tenant.
@@ -564,7 +576,15 @@ paths:
             type: array
             items: 
               $ref: '#/definitions/ScoreCardTrendResponse'
-          
+        400:
+          description: Bad Request. Returned if the 'from_date' or 'to_date' query parameters are invalid.
+          schema:
+            $ref: '#/definitions/APIError'
+        500:
+          description: Internal Server Error. Returned if there was an error retrieving the scorecard trends.
+          schema:
+            $ref: '#/definitions/APIError'
+            
   /api/scans/{id}/vulnerabilities/summary:
     x-summary: Summary of a scan's vulnerabilities
     get: 
@@ -716,6 +736,76 @@ paths:
             type: array
             items:
               $ref: '#/definitions/APIError'
+        500:
+          description: Internal Server Error - Something went wrong on the server.
+          schema:
+            $ref: '#/definitions/APIError'
+  
+  /api/scans/{id}/vulnerabilities:
+    get:
+      summary: Retrieve a list of vulnerabilities associated with a specific scan.
+      tags:
+        - Reports
+      parameters:
+        - name: id
+          in: path
+          description: ID of the scan to retrieve vulnerabilities for
+          type: string
+          required: true
+          x-example: "e7991601-e3ea-4d7f-846d-1546e1d129dd"
+        - name: Authorization
+          in: header
+          description: An authorization header
+          required: true
+          type: string
+      responses:
+        200:
+          description: Successful response with a list of vulnerabilities for the scan.
+          schema:
+            $ref: '#/definitions/ScanVulnerabilityItemsResponse'
+        400:
+          description: Bad Request - Invalid scan ID.
+          schema:
+            $ref: '#/definitions/APIError'
+        404:
+          description: Not Found - Scan with the given ID not found.
+          schema:
+            $ref: '#/definitions/APIError'
+        500:
+          description: Internal Server Error - Something went wrong on the server.
+          schema:
+              $ref: '#/definitions/APIError'
+
+  /api/vulnerabilities/{id}:
+    get:
+      summary: Get details of a specific vulnerability.
+      tags:
+        - Vulnerabilities
+      parameters:
+        - name: id
+          in: path
+          description: ID of the vulnerability
+          type: integer
+          required: true
+          x-example: 2
+        - name: Authorization
+          in: header
+          description: An authorization header
+          required: true
+          type: string
+      responses:
+        200:
+          description: Successful response with vulnerabilty details.
+          schema:
+            $ref: '#/definitions/ScanVulnerabilityDetailResponse'
+        400:
+          description: Bad request - Invalid Vulnerability ID
+          schema:
+            $ref: '#/definitions/APIError'
+        404:
+          description: "Not Found - Vulnerabilty with the given ID not found."
+          schema:
+            $ref: '#/definitions/APIError'
         500:
           description: Internal Server Error - Something went wrong on the server.
           schema:
@@ -1655,3 +1745,289 @@ definitions:
       vulnerability_count:
         type: number
         description: Count of vulnerabilities found for the host.
+  
+  ScanVulnerabilityItemsResponse:
+    title: ScanVulnerabilityItemsResponse
+    type: object
+    properties:
+      scan_date:
+        type: string
+        format: date-time
+        description: Date of the scan
+      alias:
+        type: string
+        description: Scan alias
+      total_vulnerabilities:
+        type: integer
+        description: Total number of vulnerabilities found
+      severity_counts:
+        $ref: '#/definitions/SeverityCounts'
+      vulnerabilities:
+        type: array
+        items:
+          $ref: '#/definitions/ScanVulnerabilityItem'
+
+
+  ScanVulnerabilityItem:
+    title: ScanVulnerabilityItem
+    type: object
+    properties:
+      id:
+        type: integer
+        description: ID of the vulnerability
+      name:
+        type: string
+        description: Name of the vulnerability
+      severity:
+        type: string
+        description: Severity level of the vulnerability
+      max_cvss:
+        type: number
+        format: float
+        description: Maximum CVSS score
+      risk_score:
+        type: number
+        format: float
+        description: Risk score of the vulnerability
+      impact_score:
+        type: number
+        format: float
+        description: Impact score of the vulnerability
+      likelihood:
+        type: string
+        description: Likelihood of the vulnerability being exploited
+      access:
+        type: string
+        description: Access vector of the vulnerability
+      complexity:
+        type: string
+        description: Complexity of exploiting the vulnerability
+      privileges:
+        type: string
+        description: Privileges required to exploit the vulnerability
+      exploitability:
+        type: string
+        description: Exploitability of the vulnerability
+      description:
+        type: string
+        description: Brief description (1 paragraph) of the vulnerability
+      comment:
+        type: string
+        description: Comment on the vulnerability
+      vendor_comments:
+        type: array
+        items:
+          $ref: '#/definitions/VendorComment'
+        description: Vendor comments regarding the vulnerability. Null if none.
+      references:
+        type: array
+        items:
+          type: string
+          description: List of references for the vulnerability
+
+
+  ScanVulnerabilityDetailResponse:
+    title: Scan Vulnerability Detail Response
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+        description: The vulnerability's ID.
+      scan_date:
+        type: string
+        format: date-time
+        description: Date and time when the scan was performed.
+      host:
+        $ref: '#/definitions/HostItem'
+      port:
+        $ref: '#/definitions/PortItem'
+      operating_system:
+        $ref: '#/definitions/OSItem'
+      name: 
+        type: string 
+        description: Name of the vulnerability. # NEW DEFINITION
+      severity: 
+        type: string 
+        description: Severity of the vulnerability (e.g., Critical, High, Medium, Low). 
+      max_cvss: 
+        type: number 
+        format: float 
+        description: Max CVSS score. 
+      risk_score: 
+        type: number 
+        format: float 
+        description: Risk score of the vulnerability. 
+      impact_score: 
+        type: number 
+        format: float 
+        description: Impact score of the vulnerability. 
+      likelihood: 
+        type: string 
+        description: Likelihood of the vulnerability. 
+      access: 
+        type: string 
+        description: Access type (e.g., Network). 
+      complexity: 
+        type: string 
+        description: Complexity of exploiting the vulnerability (e.g., Low). 
+      privileges: 
+        type: string 
+        description: Privileges required to exploit the vulnerability (e.g., High). 
+      exploitability: 
+        type: string 
+        description: Exploitability of the vulnerability. 
+      description:
+        type: string
+        description: A brief description (1 paragraph) of the vulnerability.
+      comment: 
+        type: string 
+        description: Analyst comment on the vulnerability. Empty string if none. 
+      vendor_comments:
+        type: array
+        items:
+          $ref: '#/definitions/VendorComment'
+        description: Vendor comments regarding the vulnerability. 
+      references: 
+        type: array 
+        items: 
+          type: string 
+        description: List of references for the vulnerability. 
+      date: 
+        $ref: '#/definitions/DateInfo' 
+      plugin: 
+        $ref: '#/definitions/PluginInfo' 
+      vpr_key_d: 
+        $ref: '#/definitions/VPRKeyInfo' 
+      risk: 
+        $ref: '#/definitions/RiskInfo' 
+
+
+  HostItem: 
+    title: Host Item 
+    type: object 
+    properties: 
+      alias: 
+        type: string 
+        description: Host alias. 
+      ip_address: 
+        type: string 
+        description: Host IP address. 
+
+
+  PortItem: 
+    title: Port Item 
+    description: Port item details, omitted if empty.
+    type: object 
+    properties: 
+      id: 
+        type: integer 
+        format: uint16 
+        description: Port ID. 
+      protocol: 
+        type: string 
+        description: Port protocol (e.g., tcp). 
+
+
+  OSItem: 
+    title: OS Item        
+    description: Operating System item details, omitted if empty.
+    type: object 
+    properties: 
+      name: 
+        type: string 
+        description: Operating System name. 
+      type: 
+        type: string 
+        description: Operating System type. 
+
+  DateInfo: 
+    title: Date Info 
+    type: object 
+    properties: 
+      published: 
+        type: string 
+        format: date-time 
+        description: Date of publishing. 
+      last_updated: 
+        type: string 
+        format: date-time 
+        description: Date of last update.
+
+
+  PluginInfo: 
+    title: Plugin Info 
+    type: object 
+    properties: 
+      cpe: 
+        type: string 
+        description: CPE. 
+      severity: 
+        type: string 
+        description: Plugin severity. 
+      version: 
+        type: string 
+        description: Plugin version. 
+      type: 
+        type: string 
+        description: Access Type. 
+      family: 
+        type: string 
+        description: Plugin family. 
+
+  VPRKeyInfo: 
+    title: VPR Key Info 
+    type: object 
+    properties: 
+      threat_intensity: 
+        type: string 
+        description: Threat intensity. 
+      exploit_code_maturity: 
+        type: string 
+        description: Exploit code maturity. 
+
+      age_of_vuln: 
+        type: integer 
+        format: int32 
+        description: Age of vulnerability in days. 
+      product_coverage: 
+        type: string 
+        description: Product coverage (Availability impact). 
+
+  RiskInfo: 
+    title: Risk Info 
+    type: object 
+    properties: 
+      risk_score: 
+        type: number 
+        format: float 
+        description: Risk score. 
+      availability_impact: 
+        type: string 
+        description: Availability impact. 
+      integrity_impact: 
+        type: string 
+        description: Integrity impact. 
+      cvss_v3_base: 
+        type: number 
+        format: float 
+        description: CVSS V3 base score, nullable. 
+      cvss_v3_vector: 
+        type: string 
+        description: CVSS V3 vector, nullable. 
+  
+  VendorComment:
+    title: Vendor Comment
+    type: object
+    properties:
+      organization:
+        type: string
+        description: Organization who provided the comment.
+      comment:
+        type: string
+        description: Body of the comment.
+      last_modified:
+        type: string
+        format: date-time
+        description: Date time of the last modification to the vendor comment.
+        
