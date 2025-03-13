@@ -811,6 +811,133 @@ paths:
           schema:
             $ref: '#/definitions/APIError'
   
+  /api/vulnerabilities/{id}/comment:
+    post:
+      summary: Add a comment to a specific vulnerability.
+      tags:
+        - Vulnerabilities
+      parameters:
+        - name: id
+          in: path
+          description: ID of the vulnerability
+          type: integer
+          required: true
+          x-example: 2
+        - name: body
+          in: body
+          description: Comment to add to the vulnerability
+          required: true
+          schema:
+            $ref: '#/definitions/VulnCommentRequest'
+        - name: Authorization
+          in: header
+          description: An authorization header
+          required: true
+          type: string
+      responses:
+        200:
+          description: Successful response with the added comment.
+          schema:
+            type: object
+            properties: 
+              created:
+                example: true
+                type: boolean
+        400:
+          description: Bad request - Invalid Vulnerability ID
+          schema:
+            $ref: '#/definitions/APIError'
+        404:
+          description: "Not Found - Vulnerabilty with the given ID not found."
+          schema:
+            $ref: '#/definitions/APIError'
+        500:
+          description: Internal Server Error - Something went wrong on the server.
+          schema:
+            $ref: '#/definitions/APIError'
+    patch:
+      summary: Edit a comment on a specific vulnerability.
+      tags:
+        - Vulnerabilities
+      parameters:
+        - name: id
+          in: path
+          description: ID of the vulnerability
+          type: integer
+          required: true
+          x-example: 2
+        - name: body
+          in: body
+          description: Comment to edit on the vulnerability
+          required: true
+          schema:
+            $ref: '#/definitions/VulnCommentRequest'
+        - name: Authorization
+          in: header
+          description: An authorization header
+          required: true
+          type: string
+      responses:
+        200:
+          description: Successful response with the edited comment.
+          schema:
+            type: object
+            properties: 
+              updated:
+                example: true
+                type: boolean
+        400:
+          description: Bad request - Invalid Vulnerability ID
+          schema:
+            $ref: '#/definitions/APIError'
+        404:
+          description: "Not Found - Vulnerabilty with the given ID not found."
+          schema:
+            $ref: '#/definitions/APIError'
+        500:
+          description: Internal Server Error - Something went wrong on the server.
+          schema:
+            $ref: '#/definitions/APIError'
+    delete:
+      summary: Delete a comment on a specific vulnerability.
+      tags:
+        - Vulnerabilities
+      parameters:
+        - name: id
+          in: path
+          description: ID of the vulnerability
+          type: integer
+          required: true
+          x-example: 2
+        - name: Authorization
+          in: header
+          description: An authorization header
+          required: true
+          type: string
+      responses:
+        200:
+          description: Successful response with the deleted comment.
+          schema:
+            type: object
+            properties: 
+              deleted:
+                example: true
+                type: boolean
+        400:
+          description: Bad request - Invalid Vulnerability ID
+          schema:
+            $ref: '#/definitions/APIError'
+        404:
+          description: "Not Found - Vulnerabilty with the given ID not found."
+          schema:
+            $ref: '#/definitions/APIError'
+        500:
+          description: Internal Server Error - Something went wrong on the server.
+          schema:
+            $ref: '#/definitions/APIError'
+
+
+
   /api/dashboards:
     x-summary: Dashboard operations
     get:
@@ -2030,4 +2157,12 @@ definitions:
         type: string
         format: date-time
         description: Date time of the last modification to the vendor comment.
-        
+  
+  VulnCommentRequest:
+    title: Vuln Comment Request
+    type: object
+    properties:
+      comment:
+        type: string
+        description: Comment to add to the vulnerability.
+        example: "This is a comment."
