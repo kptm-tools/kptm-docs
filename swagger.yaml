@@ -838,11 +838,8 @@ paths:
         200:
           description: Successful response with the added comment.
           schema:
-            type: object
-            properties: 
-              created:
-                example: true
-                type: boolean
+            type: string
+            example: Created
         400:
           description: Bad request - Invalid Vulnerability ID
           schema:
