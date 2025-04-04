@@ -12,40 +12,60 @@ This documentation is automatically generated and updated to reflect the latest 
 
 Feel free to explore the API documentation to understand the available endpoints and data models.
 
+---
 
-# WebSocket API for Get Scans
+## ⚡ WebSocket API 
 
-This section describes the WebSocket API used for get scans, using WebSockets for real-time communication.
+This section describes the asynchronous API used in `core-service`, featuring WebSockets for real-time communication.
 
-**Endpoint:** `ws://localhost:8002/ws`
+### 🔍 Get Current Scans
 
-**Header:** X-TenantId: 79c9acd6-a590-4394-8f2c-fadb07b79113
+**Endpoint:** `ws://localhost:8002/ws/scan` 🌐
+
+**Header:** `Authorization`: Bearer your-authtoken-goes-here 🔑
 
 
 **Connection Establishment:**
 
-Clients should establish a WebSocket connection to the specified endpoint. The server will send each minute the scans data for the dashboard
+Clients should establish a WebSocket connection 🔗 to the specified endpoint. The server will periodically broadcast scan data 📢 to all clients. 
 
-
-#### Server -> Client Messages
+#### 📤 Server -> Client Messages
 
 1. Sends scan data.
 
 ```json
 [
-  {
-    "scan_id": "7136aa73-0291-48d9-99c3-c2dfb072c589",
-    "scan_date": "2025-01-29T13:33:37.007298Z",
-    "host": "altoro",
-    "vulnerabilities": 0,
-    "severities": {
-      "critical": 0,
-      "high": 0,
-      "medium": 0,
-      "low": 0
+    {
+        "scan_id": "75e5b3d7-9932-47f5-a19a-4e59031ef99d",
+        "scan_date": "2025-11-08T09:00:00Z",
+        "host": "Printer Device 192.168.1.1",
+        "vulnerabilities": 1,
+        "severities": {
+            "critical": 0,
+            "high": 0,
+            "medium": 1,
+            "low": 0,
+            "none": 0,
+            "unknown": 0
+        },
+        "duration": 300,
+        "status": "Completed"
     },
-    "duration": 63873754417.0073,
-    "status": "Pending"
-  }
+    {
+        "scan_id": "0c560ebb-37e2-4375-ba11-9ea07191913b",
+        "scan_date": "2025-01-01T10:00:00Z",
+        "host": "Web Server example.com",
+        "vulnerabilities": 1,
+        "severities": {
+            "critical": 1,
+            "high": 0,
+            "medium": 0,
+            "low": 0,
+            "none": 0,
+            "unknown": 0
+        },
+        "duration": 300,
+        "status": "Completed"
+    }
 ]
 ```
