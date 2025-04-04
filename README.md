@@ -101,10 +101,10 @@ All messages exchanged over the WebSocket connection are JSON objects with the f
 
 ```json
 {
-  "type": "initial_data_request",
-  "payload": {
-    "scan_id": "string"
-  }
+  "type": "initial_data_request",
+  "payload": {
+    "scan_id": "string"
+  }
 }
 ```
 
@@ -112,11 +112,11 @@ All messages exchanged over the WebSocket connection are JSON objects with the f
 
 ```json
 {
-  "type": "vector_update",
-  "payload": {
-    "vulnerability_type_name": "string",
-    "new_value": 0.0
-  }
+  "type": "vector_update",
+  "payload": {
+    "vulnerability_type_name": "string",
+    "new_value": 0.0
+  }
 }
 ```
 
@@ -124,10 +124,10 @@ All messages exchanged over the WebSocket connection are JSON objects with the f
 
 ```json
 {
-  "type": "select_vector",
-  "payload": {
-    "vulnerability_type_name": "string"
-  }
+  "type": "select_vector",
+  "payload": {
+    "vulnerability_type_name": "string"
+  }
 }
 ```
 
@@ -135,8 +135,8 @@ All messages exchanged over the WebSocket connection are JSON objects with the f
 
 ```json
 {
-  "type": "apply_vectors_request",
-  "payload": {}
+  "type": "apply_vectors_request",
+  "payload": {}
 }
 ```
 
@@ -146,21 +146,21 @@ All messages exchanged over the WebSocket connection are JSON objects with the f
 
 ```json
 {
-  "type": "initial_data_response",
-  "payload": {
-    "vulnerability_types": [
-      {
-        "name": "string",
-        "highest_cvss": 0.0,
-        "count": 0,
-        "percentage": 0.0,
-        "available_cvss_values": []
-      },
-      // ... more vulnerability types
-    ],
-    "global_cvss_score": 0.0,
-    "global_total_vulnerabilities": 0
-  }
+  "type": "initial_data_response",
+  "payload": {
+    "vulnerability_types": [
+      {
+        "name": "string",
+        "highest_cvss": 0.0,
+        "count": 0,
+        "percentage": 0.0,
+        "available_cvss_values": []
+      }
+      // ... more vulnerability types
+    ],
+    "global_cvss_score": 0.0,
+    "global_total_vulnerabilities": 0
+  }
 }
 ```
 
@@ -168,11 +168,11 @@ All messages exchanged over the WebSocket connection are JSON objects with the f
 
 ```json
 {
-  "type": "vector_update_response",
-  "payload": {
-    "expected_global_cvss_score": 0.0,
-    "expected_global_total_vulnerabilities": 0
-  }
+  "type": "vector_update_response",
+  "payload": {
+    "expected_global_cvss_score": 0.0,
+    "expected_global_total_vulnerabilities": 0
+  }
 }
 ```
 
@@ -180,16 +180,16 @@ All messages exchanged over the WebSocket connection are JSON objects with the f
 
 ```json
 {
-  "type": "vector_details_response",
-  "payload": {
-    "vulnerability_details": {
-      "id": "string",
-      "type": "string",
-      "cvss": 0.0,
-      "description": "string"
-      // ... other relevant details
-    }
-  }
+  "type": "vector_details_response",
+  "payload": {
+    "vulnerability_details": {
+      "id": "string",
+      "type": "string",
+      "cvss": 0.0,
+      "description": "string"
+      // ... other relevant details
+    }
+  }
 }
 ```
 
@@ -197,12 +197,12 @@ All messages exchanged over the WebSocket connection are JSON objects with the f
 
 ```json
 {
-  "type": "report_data_response",
-  "payload": {
-    "solved_vulnerabilities": [],
-    "unattended_vulnerabilities": [],
-    "expected_security_posture": "string"
-  }
+  "type": "report_data_response",
+  "payload": {
+    "solved_vulnerabilities": [],
+    "unattended_vulnerabilities": [],
+    "expected_security_posture": "string"
+  }
 }
 ```
 
@@ -210,9 +210,9 @@ All messages exchanged over the WebSocket connection are JSON objects with the f
 
 ```json
 {
-  "type": "error",
-  "payload": {
-    "message": "string"
-  }
+  "type": "error",
+  "payload": {
+    "message": "string"
+  }
 }
 ```
