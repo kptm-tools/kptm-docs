@@ -88,8 +88,8 @@ All messages exchanged over the WebSocket connection are JSON objects with the f
 
 ```json
 {
-  "type": "string",
-  "payload": {}
+  "type": "string",
+  "payload": {}
 }
 ```
 
