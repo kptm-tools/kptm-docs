@@ -22,7 +22,10 @@ This section describes the asynchronous API used in `core-service`, featuring We
 
 **Endpoint:** `ws://localhost:8002/ws/scan` 🌐
 
-**Header:** `Authorization`: Bearer your-authtoken-goes-here 🔑
+**Query Parameters:**
+
+* `tenantId`: The identifier of the tenant for which to retrieve scans.
+* `otp`: The One-Time Password for authentication.
 
 
 #### Connection Establishment:
@@ -76,7 +79,9 @@ Clients should establish a WebSocket connection 🔗 to the specified endpoint. 
 
     {scanId}: Path parameter representing the unique identifier of the cybersecurity scan. Each scanId can be considered a separate "room" for real-time interaction.
 
-**Header:** Authorization: Bearer your-authtoken-goes-here 🔑
+**Query Parameter:**
+
+* `otp`: The One-Time Password for authentication.
 
 #### Connection Establishment:
 
