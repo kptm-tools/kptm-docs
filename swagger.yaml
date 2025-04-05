@@ -64,6 +64,8 @@ paths:
                 usernameStatus: "ACTIVE"
                 verified: true
                 verifiedInstant: 1677686400000
+              tenantId: "123e4567-e89b-12d3-a456-426614174001"
+              otp: "ed092238-22f2-4b7f-a90e-34325b0cfeef"
         400:
           description: Bad Request with error details
           schema:
@@ -1037,6 +1039,12 @@ definitions:
         description: The timestamp (in milliseconds) when the access token expires.
       user:
         $ref: '#/definitions/User'
+      tenantId:
+        type: string
+        description: The ID of the tenant associated to the user.
+      otp:
+        type: string
+        description: The One-Time-Password which must be provided in order to access WebSocket endpoints.
         
   RegisterUserRequest:
     title: Register User Request
