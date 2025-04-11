@@ -76,7 +76,7 @@ Clients should establish a WebSocket connection 🔗 to the specified endpoint. 
 
 ### 📊 Dynamic Security Report
 
-**Endpoint:** ws://localhost:8002/ws/report/{scanId} 🌐
+**Endpoint:** ws://localhost:8002/ws/report 🌐
 
     {scanId}: Path parameter representing the unique identifier of the cybersecurity scan. Each scanId can be considered a separate "room" for real-time interaction.
 
