@@ -1,3 +1,4 @@
+
 # 🚀 Core API Documentation 🚀
 
 Welcome to the documentation repository for the Core API! 📖
@@ -188,11 +189,14 @@ All messages exchanged over the WebSocket connection are JSON objects with the f
   "type": "vector_details_response",
   "payload": {
     "vulnerability_details": {
-      "id": "string",
+      "name": "string",
       "type": "string",
       "cvss": 0.0,
-      "description": "string"
-      // ... other relevant details
+      "description": "string",
+      "privileges_required": "string",
+      "classification": "string",
+      "integrity": "string",
+      "availability": "string"
     }
   }
 }
