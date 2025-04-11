@@ -208,9 +208,113 @@ All messages exchanged over the WebSocket connection are JSON objects with the f
 {
   "type": "report_data_response",
   "payload": {
-    "solved_vulnerabilities": [],
-    "unattended_vulnerabilities": [],
-    "expected_security_posture": "string"
+    "solved_vulnerabilities": [
+        {
+            "ID": 2,
+            "VulnerabilityID": "CVE-2017-15715",
+            "ScanID": "77ff7d52-6e1a-48d1-84c7-0db4e8a5d018",
+            "HostID": 1,
+            "OperatingSystemID": null,
+            "ServiceID": 5,
+            "Type": "Injection",
+            "BaseCVSSScore": 9.8,
+            "References": [
+                "https://nvd.nist.gov/vuln/detail/CVE-2017-15715"
+            ],
+            "Description": "",
+            "AccessType": "",
+            "Complexity": "",
+            "PrivilegesRequired": "",
+            "Likelihood": "",
+            "RiskScore": 0,
+            "ImpactScore": 0,
+            "Exploit": {
+                "exploit_score": 0.8,
+                "exploitability": "Unproven"
+            },
+            "IntegrityImpact": "",
+            "AvailabilityImpact": "",
+            "BaseSeverity": "Critical",
+            "Severity": "Critical",
+            "Published": "0001-01-01T00:00:00Z",
+            "LastUpdated": "0001-01-01T00:00:00Z",
+            "CreatedAt": "2025-04-11T14:02:29.298292Z",
+            "UpdatedAt": "2025-04-11T14:02:29.298292Z",
+            "AnalystComment": null,
+            "VendorComments": null
+        },
+        {
+            "ID": 3,
+            "VulnerabilityID": "CVE-2021-34527",
+            "ScanID": "77ff7d52-6e1a-48d1-84c7-0db4e8a5d018",
+            "HostID": 1,
+            "OperatingSystemID": null,
+            "ServiceID": 3,
+            "Type": "Broken Access Control",
+            "BaseCVSSScore": 7.5,
+            "References": [
+                "https://nvd.nist.gov/vuln/detail/CVE-2021-34527"
+            ],
+            "Description": "",
+            "AccessType": "",
+            "Complexity": "",
+            "PrivilegesRequired": "",
+            "Likelihood": "",
+            "RiskScore": 0,
+            "ImpactScore": 0,
+            "Exploit": {
+                "exploit_score": 0.8,
+                "exploitability": "Unproven"
+            },
+            "IntegrityImpact": "",
+            "AvailabilityImpact": "",
+            "BaseSeverity": "High",
+            "Severity": "High",
+            "Published": "0001-01-01T00:00:00Z",
+            "LastUpdated": "0001-01-01T00:00:00Z",
+            "CreatedAt": "2025-04-11T14:02:29.298292Z",
+            "UpdatedAt": "2025-04-11T14:02:29.298292Z",
+            "AnalystComment": null,
+            "VendorComments": null
+        },
+    ],
+    "unattended_vulnerabilities": [
+        {
+            "ID": 2,
+            "VulnerabilityID": "CVE-2017-15715",
+            "ScanID": "77ff7d52-6e1a-48d1-84c7-0db4e8a5d018",
+            "HostID": 1,
+            "OperatingSystemID": null,
+            "ServiceID": 5,
+            "Type": "Other",
+            "BaseCVSSScore": 9.8,
+            "References": [
+                "https://nvd.nist.gov/vuln/detail/CVE-2017-15715"
+            ],
+            "Description": "",
+            "AccessType": "",
+            "Complexity": "",
+            "PrivilegesRequired": "",
+            "Likelihood": "",
+            "RiskScore": 0,
+            "ImpactScore": 0,
+            "Exploit": {
+                "exploit_score": 0.8,
+                "exploitability": "Unproven"
+            },
+            "IntegrityImpact": "",
+            "AvailabilityImpact": "",
+            "BaseSeverity": "Critical",
+            "Severity": "Critical",
+            "Published": "0001-01-01T00:00:00Z",
+            "LastUpdated": "0001-01-01T00:00:00Z",
+            "CreatedAt": "2025-04-11T14:02:29.298292Z",
+            "UpdatedAt": "2025-04-11T14:02:29.298292Z",
+            "AnalystComment": null,
+            "VendorComments": null
+        },
+    ],
+    "expected_security_posture": 0.0
   }
 }
 ```
