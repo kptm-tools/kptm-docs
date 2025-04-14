@@ -208,6 +208,27 @@ All messages exchanged over the WebSocket connection are JSON objects with the f
 {
   "type": "report_data_response",
   "payload": {
+    "vulnerability_graph": {
+      "series": {
+        {
+          "name": "Actual",
+          "data": [
+            {"x": "Injection", "y": 5.0},
+            {"x": "Software and Data Integrity Failures", "y", 4.0},
+            {"x": "Vulnerable and Outdated Components", "y", 4.5}
+          ],
+          "average": 4.5
+        },
+        {
+          "name": "Expected",
+          "data": [
+            {"x": "Injection", "y": 5.0}
+          ],
+          "average": 5.0
+        }
+      }
+    },
+    "expected_security_posture": 0.0,
     "solved_vulnerabilities": [
         {
             "ID": 2,
@@ -313,8 +334,7 @@ All messages exchanged over the WebSocket connection are JSON objects with the f
             "AnalystComment": null,
             "VendorComments": null
         },
-    ],
-    "expected_security_posture": 0.0
+    ]
   }
 }
 ```
