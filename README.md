@@ -233,6 +233,7 @@ All messages exchanged over the WebSocket connection are JSON objects with the f
       {
       "id": 0,
       "name": "string",
+      "type": "string",
       "severity": "string",
       "max_cvss": 0,
       "risk_score": 0,
@@ -260,6 +261,7 @@ All messages exchanged over the WebSocket connection are JSON objects with the f
       {
       "id": 0,
       "name": "string",
+      "type": "string",
       "severity": "string",
       "max_cvss": 0,
       "risk_score": 0,
