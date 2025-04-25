@@ -1910,6 +1910,9 @@ definitions:
       name:
         type: string
         description: Name of the vulnerability
+      type:
+        type: string
+        description: Type of the vulnerability
       severity:
         type: string
         description: Severity level of the vulnerability
