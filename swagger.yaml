@@ -185,6 +185,23 @@ paths:
           description: Successful Response containing user data and verificationId that is used to verify email
           schema:
             $ref: "#/definitions/DomainUser"
+  /api/users/permissions:
+    x-summary: User endpoints for permissions
+    get:
+      tags:
+        - Users
+      summary: Get a user's permissions.
+      responses:
+        200:
+          description: Successful Response containing a user's denied permissions for his given roles.
+          schema: 
+            $ref: '#/definitions/UserPermissionsResponse'
+        401:
+          description: Unauthorized - Authentication required
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/APIError'
   /api/users/{userID}:
     x-summary: User endpoints given a userID
     post:
@@ -2174,3 +2191,25 @@ definitions:
         type: string
         description: Comment to add to the vulnerability.
         example: "This is a comment."
+
+  UserPermissionsResponse:
+    title: User permissions response
+    type: object
+    properties:
+      user_roles:
+        type: array
+        items:
+          type: string
+          description: List of roles detected for the user
+          example: "operator"
+      denied_actions:
+        type: array
+        items:
+          type: string
+          description: List of denied actions for the user following "<resource>:<action>" syntax
+          example: "scan:cancel_by_id"
+      effective_permissions_last_updated:
+        type: string
+        format: date-time
+        description: Date time of the last modification to the set of permissions in the backend.
+
